@@ -30,7 +30,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'id_usuario',
+            [
+                'attribute' => 'id_usuario',
+                'label' => 'Nombre de Usuario',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $username = $model->user ? $model->user->username : 'Sin usuario'; 
+                    
+                    /** Verificar permiso */
+            
+                    return $username;
+                }
+            ],
             'id_suscripcion',
             'fecha_insercion',
             [
