@@ -2,11 +2,15 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\UsuarioPla;
+use yii\data\ActiveDataProvider;
 use app\models\UsuarioPlaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Permiso;
 
 /**
  * UsuarioPlaController implements the CRUD actions for UsuarioPla model.
@@ -38,11 +42,34 @@ class UsuarioPlaController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new UsuarioPlaSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
+        if (!Permiso::accion('usuario_pla', 'index')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+    
+        // Obtener el ID del usuario y su rol
+        $userId = Yii::$app->user->identity->id;
+        $userRol = Yii::$app->user->identity->id_rol;
+    
+        // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
+        $query = ($userRol == 4) ? UsuarioPla::find()->where(['id_usuario' => $userId]) : UsuarioPla::find();
+    
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 25
+            ],
+           /* 'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
+    
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -55,10 +82,18 @@ class UsuarioPlaController extends Controller
      */
     public function actionView($id)
     {
+        if (!Permiso::accion('usuario_pla', 'view')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
+
 
     /**
      * Creates a new UsuarioPla model.
@@ -67,6 +102,13 @@ class UsuarioPlaController extends Controller
      */
     public function actionCreate()
     {
+        if (!Permiso::accion('usuario_pla', 'create')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $model = new UsuarioPla();
 
         if ($this->request->isPost) {
@@ -101,6 +143,20 @@ class UsuarioPlaController extends Controller
             'model' => $model,
         ]);
     }
+        public function actionUpdateEstatus($id)
+    {
+        if (!Permiso::accion('usuario_pla', 'update-estatus')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
+        $model = $this->findModel($id);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        }
+        return $this->redirect(['index']);
+    }
 
     /**
      * Deletes an existing UsuarioPla model.
@@ -111,6 +167,13 @@ class UsuarioPlaController extends Controller
      */
     public function actionDelete($id)
     {
+        if (!Permiso::accion('ticket', 'delete')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Estado',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $statusLabel = $model->status == 'cerrado' ? 'Cerrado' : 'Abierto';
+                    $statusLabel = $model->status == 'cerrado' ? 'Cerrado' : 'Sin Abrir';
                     $btnClass = $model->status == 'cerrado' ? 'btn-secondary' : 'btn-warning';
                     
                     /** Verificar permiso */

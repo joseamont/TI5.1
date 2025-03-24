@@ -5,27 +5,56 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\models\Permiso;
+use app\models\User;
 
 /** @var yii\web\View $this */
 /** @var app\models\UsuarioPlaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Planes Cliente';
+if (!Permiso::seccion('usuario_pla')) {
+    return $this->render('/site/error', [
+        'name' => 'Permiso denegado',
+        'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+    ]);
+}
+$form = '';
+
+$this->title = 'Planes cliente';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="usuario-pla-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<h3> <?= Html::encode($this->title) ?> </h3>
+    <hr>
 
-    <p>
-        <?= Html::a('Create Usuario Pla', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php
+    /** Verificar permiso */
+    if (Permiso::accion('usuario_pla', 'create')) {
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        //  Crear un nuevo rol utilizando _form.php en el modal 'modalForm' de abajo
+        echo Html::a('Nuevo Plan Cliente', ['#'], [
+            'class' => 'btn  btn-sm btn-outline-success',
+            'data-bs-toggle' => 'modal',
+            'data-bs-target' => '#modalForm',
+        ]);
+        
+        $form = $this->render('_form', ['model' => new UsuarioPla(), 'accion' => 'create']);
+    }
+    ?>
 
-    <?= GridView::widget([
+
+<br><br>
+
+<?= GridView::widget([
+        /** dataProvider poblado desde TicketController - actionIndex() */
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        /** Formado de botones de paginación */
+        'pager' => [
+            'class' => \yii\bootstrap5\LinkPager::class,
+            'firstPageLabel' => 'Inicio ',
+            'lastPageLabel' => ' Último',
+        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -37,21 +66,40 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     $username = $model->user ? $model->user->username : 'Sin usuario'; 
                     
-                    /** Verificar permiso */
+                    if (Permiso::accion('usuario_pla', 'view')) {
+                        return Html::a(
+                            $username,
+                            ['view', 'id' => $model->id],
+                            ['class' => 'btn btn-outline-dark btn-sm']
+                        );
+                    }
             
                     return $username;
                 }
             ],
             'id_suscripcion',
             'fecha_insercion',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, UsuarioPla $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
         ],
     ]); ?>
 
 
+</div>
+
+<!-- Modal donde se presenta _form para crear un nuevo rol  -->
+<div class="modal fade modal-lg" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  bg-info">
+                <h3 class="modal-title" id="modalFormLabel">
+                    Nuevo Ticket
+                </h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <div id="modalFormBody">
+                    <?= $form; ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

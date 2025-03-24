@@ -1,36 +1,41 @@
 <?php
 
+use app\models\Suscripciones;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+
+use yii\helpers\ArrayHelper;
+use app\models\Asistencia;
 
 /** @var yii\web\View $this */
 /** @var app\models\Ticket $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="ticket-form">
 
+    <div class="ticket-form">
+<?php     
+    $form = ActiveForm::begin(['action' => [$accion, 'id' => $model->id]]);
+ ?>
 
-    <?php $form = ActiveForm::begin(); ?>
+<?= $form->field($model, 'id_usuario')->hiddenInput(['value' => Yii::$app->user->identity->id])->label(false) ?>
 
-    <?= $form->field($model, 'id_usuario')->textInput() ?>
-
-    <?= $form->field($model, 'id_suscripcion')->textInput() ?>
+    <div class="col-sm-3">
+            <?php
+            $i = ArrayHelper::map(Suscripciones::find()->all(), 'id', 'nombre');
+            echo $form->field($model, 'id_suscripcion')->dropDownList($i, ['prompt' => 'Seleccionar'])->label('Plan');
+            ?>
+        </div>
 
     <?= $form->field($model, 'tipo')->dropDownList([ 'Estado de Suscripción' => 'Estado de Suscripción', 'Problemas de Reproducción' => 'Problemas de Reproducción', 'Informe de Reembolsos y Soporte' => 'Informe de Reembolsos y Soporte', 'Otros' => 'Otros', ], ['prompt' => '']) ?>
 
-    <?= $form->field($model, 'fecha_apertura')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_cierre')->textInput() ?>
-
-    <?= $form->field($model, 'status')->dropDownList([ 'sin abrir' => 'Sin abrir', 'abierto' => 'Abierto', 'cerrado' => 'Cerrado', ], ['prompt' => '']) ?>
 
     <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'id_calificacion')->textInput() ?>
 
+    <br>
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Guardar', ['class' => 'btn btn-outline-success btn-sm']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

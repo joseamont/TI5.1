@@ -91,8 +91,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'label' => 'Planes',
                     'url' => ['#'],
                     'items' => [
-                        Permiso::seccion('suscripciones') ? ['label' => 'Planes', 'url' => ['/suscripciones/index']] : '',
                         Permiso::seccion('suscripciones') ? 
+    [               'label' => (Yii::$app->user->identity->id_rol == 4 ? 'Contratar servicio' : 'Planes'), 'url' => ['/suscripciones/index']] : '',
+                        Permiso::seccion('usuario_pla') ? 
     [               'label' => (Yii::$app->user->identity->id_rol == 4 ? 'Mis Planes' : 'Planes Clientes'), 'url' => ['/usuario-pla/index']] : '',
 
                     ]
@@ -102,8 +103,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'label' => 'Horarios',
                     'url' => ['#'],
                     'items' => [
-                        Permiso::seccion('user') ? ['label' => 'Horarios', 'url' => ['/horario/index']] : '',
-                        Permiso::seccion('seccion') ? ['label' => 'Horarios Trabajadores', 'url' => ['/usuario-hor/index']] : '',
+                        Permiso::seccion('horario') ? ['label' => 'Horarios', 'url' => ['/horario/index']] : '',
+                        Permiso::seccion('usuario_hor') ? ['label' => 'Horarios Trabajadores', 'url' => ['/usuario-hor/index']] : '',
                     ]
                 ] : '',
 
