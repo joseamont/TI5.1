@@ -86,10 +86,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     $nombreSuscripcion = $model->suscripcion ? $model->suscripcion->nombre : 'Sin suscripción'; 
                     
                     /** Verificar permiso */
-                    if (Permiso::accion('ticket', 'view')) {
+                    if ($model->suscripcion && Permiso::accion('suscripcion', 'view')) {
                         return Html::a(
                             $nombreSuscripcion,
-                            ['view', 'id' => $model->id],
+                            ['suscripcion/view', 'id' => $model->id_suscripcion],
                             ['class' => 'btn btn-outline-primary btn-sm']
                         );
                     }
@@ -97,11 +97,38 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $nombreSuscripcion;
                 }
             ],
+            
                        
             'tipo',
             'fecha_apertura',
             'descripcion',
-            'status'
+            [
+                'attribute' => 'status',
+                'label' => 'Estado',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $statusLabel = $model->status == 'cerrado' ? 'Cerrado' : 'Abierto';
+                    $btnClass = $model->status == 'cerrado' ? 'btn-secondary' : 'btn-warning';
+                    
+                    /** Verificar permiso */
+                    if ($model->status != 'cerrado' && Permiso::accion('ticket', 'update')) {
+                        return Html::a(
+                            $statusLabel,
+                            ['ticket/cerrar', 'id' => $model->id], // Llamada a la acción para cerrar
+                            [
+                                'class' => "btn $btnClass btn-sm",
+                                'data' => [
+                                    'confirm' => '¿Estás seguro de que quieres cerrar este ticket?',
+                                    'method' => 'post',
+                                ],
+                            ]
+                        );
+                    }
+            
+                    return Html::tag('span', $statusLabel, ['class' => "badge bg-$btnClass"]);
+                }
+            ],
+            
             //Boton habilitar
         ],
     ]); ?>
