@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\UsuarioCal;
 use yii\data\ActiveDataProvider;
 use app\models\UsuarioCalSearch;
@@ -47,8 +49,16 @@ class UsuarioCalController extends Controller
                 'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
             ]);
         }
+    
+        // Obtener el ID del usuario y su rol
+        $userId = Yii::$app->user->identity->id;
+        $userRol = Yii::$app->user->identity->id_rol;
+    
+        // Si el usuario es de rol 3, solo ve sus propias calificacines; de lo contrario, ve todos
+        $query = ($userRol == 3) ? UsuarioCal::find()->where(['id_usuario' => $userId]) : UsuarioCal::find();
+    
         $dataProvider = new ActiveDataProvider([
-            'query' => UsuarioCal::find(),
+            'query' => $query,
             'pagination' => [
                 'pageSize' => 25
             ],
@@ -59,7 +69,7 @@ class UsuarioCalController extends Controller
             ],
             */
         ]);
-
+    
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);

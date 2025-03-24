@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var app\models\UsuarioPlaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Usuario Plas';
+$this->title = 'Planes Cliente';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="usuario-pla-index">

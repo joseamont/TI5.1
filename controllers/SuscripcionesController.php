@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\models\Suscripciones;
+use yii\data\ActiveDataProvider;
 use app\models\SuscripcionesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
+use app\models\Permiso;
 
 /**
  * SuscripcionesController implements the CRUD actions for Suscripciones model.
@@ -38,11 +41,27 @@ class SuscripcionesController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new SuscripcionesSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        if (!Permiso::accion('suscripciones', 'index')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => Suscripciones::find(),
+            'pagination' => [
+                'pageSize' => 25
+            ],
+           /* 'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -55,6 +74,13 @@ class SuscripcionesController extends Controller
      */
     public function actionView($id)
     {
+        if (!Permiso::accion('suscripciones', 'view')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -67,6 +93,13 @@ class SuscripcionesController extends Controller
      */
     public function actionCreate()
     {
+        if (!Permiso::accion('suscripciones', 'create')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $model = new Suscripciones();
 
         if ($this->request->isPost) {
@@ -101,6 +134,20 @@ class SuscripcionesController extends Controller
             'model' => $model,
         ]);
     }
+        public function actionUpdateEstatus($id)
+    {
+        if (!Permiso::accion('suscripciones', 'update-estatus')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
+        $model = $this->findModel($id);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        }
+        return $this->redirect(['index']);
+    }
 
     /**
      * Deletes an existing Suscripciones model.
@@ -111,6 +158,13 @@ class SuscripcionesController extends Controller
      */
     public function actionDelete($id)
     {
+        if (!Permiso::accion('suscripciones', 'delete')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

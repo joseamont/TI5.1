@@ -80,16 +80,21 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             'options' => ['class' => 'nav flex-column'],
             'items' => [
                 Permiso::seccion('user') ? ['label' => 'Usuarios', 'url' => ['/user/index']] : '',
-                Permiso::seccion('ticket') ? ['label' => 'Tickets', 'url' => ['/ticket/index']] : '',
-                Permiso::seccion('user') ? ['label' => 'Asistencias', 'url' => ['/asistencia/index']] : '',
-                Permiso::seccion('user') ? ['label' => 'Calificaciones', 'url' => ['/usuario-cal/index']] : '',
+                Permiso::seccion('ticket') ? 
+                    ['label' => (Yii::$app->user->identity->id_rol == 4 ? 'Mis Tickets' : 'Tickets'), 'url' => ['/ticket/index']] : '', 
+
+                Permiso::seccion('asistencia') ? ['label' => 'Asistencias', 'url' => ['/asistencia/index']] : '',
+                Permiso::seccion('usuario_cal') ? 
+                    ['label' => (Yii::$app->user->identity->id_rol == 3 ? 'Mis Calificaciones' : 'Calificaciones'), 'url' => ['/usuario-cal/index']] : '', 
                 
                 Permiso::seccion('suscripciones') ? [
                     'label' => 'Planes',
                     'url' => ['#'],
                     'items' => [
-                        Permiso::seccion('user') ? ['label' => 'Planes', 'url' => ['/suscripciones/index']] : '',
-                        Permiso::seccion('seccion') ? ['label' => 'Planes Clientes', 'url' => ['/usuario-pla/index']] : '',
+                        Permiso::seccion('suscripciones') ? ['label' => 'Planes', 'url' => ['/suscripciones/index']] : '',
+                        Permiso::seccion('suscripciones') ? 
+    [               'label' => (Yii::$app->user->identity->id_rol == 4 ? 'Mis Planes' : 'Planes Clientes'), 'url' => ['/usuario-pla/index']] : '',
+
                     ]
                 ] : '',
                 
