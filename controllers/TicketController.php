@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\Ticket;
 use yii\data\ActiveDataProvider;
 use app\models\TicketSearch;
@@ -47,8 +49,16 @@ class TicketController extends Controller
                 'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
             ]);
         }
+    
+        // Obtener el ID del usuario y su rol
+        $userId = Yii::$app->user->identity->id;
+        $userRol = Yii::$app->user->identity->id_rol;
+    
+        // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
+        $query = ($userRol == 4) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
+    
         $dataProvider = new ActiveDataProvider([
-            'query' => Ticket::find(),
+            'query' => $query,
             'pagination' => [
                 'pageSize' => 25
             ],
@@ -59,11 +69,12 @@ class TicketController extends Controller
             ],
             */
         ]);
-
+    
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
     }
+    
 
     /**
      * Displays a single Ticket model.

@@ -36,11 +36,29 @@ $this->params['breadcrumbs'][] = $this->title;
             'dispositivos',
             //'duracion',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Suscripciones $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {contratar}',
+                'buttons' => [
+                    'contratar' => function ($url, $model) {
+                        if (Yii::$app->user->identity->id_rol == 4) {
+                            return Html::a(
+                                'Contratar', 
+                                ['suscripciones/contratar', 'id' => $model->id], // Asegurar que coincide con el controlador correcto
+                                [
+                                    'class' => 'btn btn-success btn-sm',
+                                    'data' => [
+                                        'confirm' => '¿Estás seguro de que quieres contratar este plan?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            );
+                        }
+                        return '';
+                    },
+                ],
             ],
+            
+            
         ],
     ]); ?>
 

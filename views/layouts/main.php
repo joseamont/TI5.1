@@ -98,7 +98,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'url' => ['#'],
                     'items' => [
                         Permiso::seccion('user') ? ['label' => 'Horarios', 'url' => ['/horario/index']] : '',
-                        Permiso::seccion('seccion') ? ['label' => 'Hoarios Trabajadores', 'url' => ['/usuario-hor/index']] : '',
+                        Permiso::seccion('seccion') ? ['label' => 'Horarios Trabajadores', 'url' => ['/usuario-hor/index']] : '',
                     ]
                 ] : '',
 

@@ -71,4 +71,16 @@ class UsuarioCal extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'id_usuario']);
     }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'id_usuario']);
+    }
+
+    public function getCalificacion()
+    {
+        return $this->hasOne(Calificaciones::class, ['id' => 'id_calificaciones']);
+    }
+
 }
+

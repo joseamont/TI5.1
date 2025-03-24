@@ -84,12 +84,6 @@ $this->params['breadcrumbs'][] = $this->title;
             //'STATUS',
             //'created_at',
             //'updated_at',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Asistencia $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
         ],
     ]); ?>
 
@@ -101,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="modal-content">
             <div class="modal-header  bg-info">
                 <h3 class="modal-title" id="modalFormLabel">
-                    Nuevo Ticket
+                    Registrar asistencia
                 </h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>

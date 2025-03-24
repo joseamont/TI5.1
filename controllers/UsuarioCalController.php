@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\models\UsuarioCal;
+use yii\data\ActiveDataProvider;
 use app\models\UsuarioCalSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
+use app\models\Permiso;
 
 /**
  * UsuarioCalController implements the CRUD actions for UsuarioCal model.
@@ -38,11 +41,26 @@ class UsuarioCalController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new UsuarioCalSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        if (!Permiso::accion('usuario_cal', 'index')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => UsuarioCal::find(),
+            'pagination' => [
+                'pageSize' => 25
+            ],
+           /* 'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -55,6 +73,13 @@ class UsuarioCalController extends Controller
      */
     public function actionView($id)
     {
+        if (!Permiso::accion('usuario_cal', 'view')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -67,6 +92,13 @@ class UsuarioCalController extends Controller
      */
     public function actionCreate()
     {
+        if (!Permiso::accion('usuario_cal', 'create')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $model = new UsuarioCal();
 
         if ($this->request->isPost) {
@@ -101,16 +133,35 @@ class UsuarioCalController extends Controller
             'model' => $model,
         ]);
     }
+        public function actionUpdateEstatus($id)
+    {
+        if (!Permiso::accion('usuario_cal', 'update-estatus')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
 
+        $model = $this->findModel($id);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        }
+        return $this->redirect(['index']);
+    }
     /**
      * Deletes an existing UsuarioCal model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
+     */   public function actionDelete($id)
     {
+        if (!Permiso::accion('usuario_cal', 'delete')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
