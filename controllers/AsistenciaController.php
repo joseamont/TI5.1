@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\Asistencia;
 use yii\data\ActiveDataProvider;
 use app\models\AsistenciaSearch;
@@ -41,14 +43,22 @@ class AsistenciaController extends Controller
      */
     public function actionIndex()
     {
-        if (!Permiso::accion('asistencia', 'index')) {
+        if (!Permiso::accion('ticket', 'index')) {
             return $this->render('/site/error', [
                 'name' => 'Permiso denegado',
                 'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
             ]);
         }
+    
+        // Obtener el ID del usuario y su rol
+        $userId = Yii::$app->user->identity->id;
+        $userRol = Yii::$app->user->identity->id_rol;
+    
+        // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
+        $query = ($userRol == 3) ? Asistencia::find()->where(['id_usuario' => $userId]) : Asistencia::find();
+    
         $dataProvider = new ActiveDataProvider([
-            'query' => Asistencia::find(),
+            'query' => $query,
             'pagination' => [
                 'pageSize' => 25
             ],
@@ -59,7 +69,7 @@ class AsistenciaController extends Controller
             ],
             */
         ]);
-
+    
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);

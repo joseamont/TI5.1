@@ -4,6 +4,7 @@
 
 $this->title = 'Genesia - Streaming';
 ?>
+
 <div class="site-index">
 
 <?php if (!Yii::$app->user->isGuest): ?>
@@ -213,7 +214,7 @@ $this->title = 'Genesia - Streaming';
                 <!-- Serie 1 -->
                 <div class="col-md-4">
                     <div class="card">
-                        <img src="https://source.unsplash.com/300x200/?action,movie" class="card-img-top" alt="Acción">
+                        <img src="https://hips.hearstapps.com/hmg-prod/images/74f2d3240bc60a44aa566433e0a3e25c.jpeg?crop=1xw:1xh;center,top&resize=980:*" class="card-img-top" alt="Acción">
                         <div class="card-body">
                             <h5 class="card-title">🔥 Explosión Total</h5>
                             <p class="card-text">Episodio 5 - "La última misión".</p>
@@ -225,7 +226,7 @@ $this->title = 'Genesia - Streaming';
                 <!-- Serie 2 -->
                 <div class="col-md-4">
                     <div class="card">
-                        <img src="https://source.unsplash.com/300x200/?horror,movie" class="card-img-top" alt="Terror">
+                        <img src="https://hips.hearstapps.com/hmg-prod/images/monkey-man-dev-patel-661bf82dc85d0.jpg?crop=1xw:1xh;center,top&resize=980:*" class="card-img-top" alt="Terror">
                         <div class="card-body">
                             <h5 class="card-title">👻 No mires atrás</h5>
                             <p class="card-text">Episodio 8 - "Susurros en la oscuridad".</p>
@@ -237,7 +238,7 @@ $this->title = 'Genesia - Streaming';
                 <!-- Serie 3 -->
                 <div class="col-md-4">
                     <div class="card">
-                        <img src="https://source.unsplash.com/300x200/?zombies,movie" class="card-img-top" alt="Zombies">
+                        <img src="https://hips.hearstapps.com/hmg-prod/images/killboy-poster-248-66853883c73e7.jpg?crop=1xw:1xh;center,top&resize=980:*" class="card-img-top" alt="Zombies">
                         <div class="card-body">
                             <h5 class="card-title">🧟‍♂️ Infierno Viviente</h5>
                             <p class="card-text">Episodio 3 - "Noche sin escapatoria".</p>
@@ -247,84 +248,50 @@ $this->title = 'Genesia - Streaming';
                 </div>
             </div>
         </div>
-    <?php else: ?>
-        <!-- Contenido para los demás usuarios -->
-        <div class="jumbotron text-center bg-transparent mt-4 mb-4">
-            <h1 class="display-4">Bienvenido a Genesia Streaming</h1>
-            <p class="lead">Tu plataforma de entretenimiento multiplataforma con miles de títulos.</p>
-        </div>
-
-        <div class="body-content">
-            <div id="genesiaCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="d-flex justify-content-center">
-                            <canvas id="chartUsuarios" style="width: 80%; height: 300px;"></canvas>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="d-flex justify-content-center">
-                            <canvas id="chartSuscripciones" style="width: 80%; height: 300px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#genesiaCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#genesiaCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
-            </div>
-        </div>
     <?php endif; ?>
 <?php endif; ?>
 
 
-
-
-                <!-- Controles del carrusel (solo para invitados, oculto si logeado) -->
-                <?php if (Yii::$app->user->isGuest): ?>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#genesiaCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#genesiaCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                <?php endif; ?>
-            </div>
-
             <?php if (Yii::$app->user->isGuest): ?>
-    <div id="guestCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <!-- Primer slide -->
-            <div class="carousel-item active">
-                <img src="https://images.pexels.com/photos/10464454/pexels-photo-10464454.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="Explora Genesia">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Explora Genesia</h5>
-                    <p>Descubre lo mejor del cine y la televisión, sin necesidad de iniciar sesión.</p>
-                </div>
-            </div>
-            <!-- Segundo slide -->
-            <div class="carousel-item">
-                <img src="https://images.pexels.com/photos/10464475/pexels-photo-10464475.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="Accede al entretenimiento">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Accede a lo mejor del entretenimiento</h5>
-                    <p>Explora películas, series y más. ¡Suscríbete para acceder a contenido exclusivo!</p>
-                </div>
-            </div>
-            <!-- Tercer slide -->
-            <div class="carousel-item">
-                <img src="https://images.pexels.com/photos/6065463/pexels-photo-6065463.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="Únete a Genesia">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Únete a Genesia</h5>
-                    <p>Suscríbete y accede a contenido exclusivo y estrenos.</p>
-                </div>
+                <div class="jumbotron text-center bg-transparent mt-0 mb-0">
+        <h1 class="display-4">Bienvenido a Genesia Streaming</h1>
+        <p class="lead">Dashboard para trabajadores del sistema tecnico Genesia</p>
+    </div>
+
+    <div class="carousel-inner">
+        <!-- Primer slide -->
+        <div class="carousel-item active">
+            <img src="https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/09/baby-driver-2017-2817383.jpg?tf=640x" class="d-block w-100" alt="Explora Genesia">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Explora Genesia</h5>
+                <p>Descubre lo mejor del cine y la televisión, sin necesidad de iniciar sesión.</p>
+                <!-- Botones de suscripción -->
+                <a href="/suscribirse" class="btn btn-primary btn-lg">Suscríbete ahora</a>
+                <a href="/explorar" class="btn btn-secondary btn-lg">Explorar contenido</a>
             </div>
         </div>
+        <!-- Segundo slide -->
+        <div class="carousel-item">
+            <img src="https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/09/filo-manana-2014-2817399.jpg?tf=640x" class="d-block w-100" alt="Accede al entretenimiento">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Accede a lo mejor del entretenimiento</h5>
+                <p>Explora películas, series y más. ¡Suscríbete para acceder a contenido exclusivo!</p>
+                <!-- Botones de suscripción -->
+                <a href="/suscribirse" class="btn btn-primary btn-lg">Suscríbete ahora</a>
+                <a href="/explorar" class="btn btn-secondary btn-lg">Explorar contenido</a>
+            </div>
+        </div>
+        <!-- Tercer slide -->
+        <div class="carousel-item">
+            <img src="https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/09/kingsman-servicio-secreto-2014-2817379.jpg?tf=640x" class="d-block w-100" alt="Únete a Genesia">
+            <div class="carousel-caption d-none d-md-block">
+                <!-- Botones de suscripción -->
+                <a href="/suscribirse" class="btn btn-primary btn-lg">Suscríbete ahora</a>
+                <a href="/explorar" class="btn btn-secondary btn-lg">Explorar contenido</a>
+            </div>
+        </div>
+    </div>
+
 
         <!-- Controles del carrusel -->
         <button class="carousel-control-prev" type="button" data-bs-target="#guestCarousel" data-bs-slide="prev">

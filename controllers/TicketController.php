@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 
 use app\models\Ticket;
+use app\models\Respuesta;
 use yii\data\ActiveDataProvider;
 use app\models\TicketSearch;
 use yii\web\Controller;
@@ -196,5 +197,51 @@ class TicketController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionCerrar($id)
+{
+    $ticket = Ticket::findOne($id);
+    if (!$ticket) {
+        throw new NotFoundHttpException('El ticket no existe.');
+    }
+
+    // Verificar permiso
+    if (!Permiso::accion('ticket', 'update')) {
+        Yii::$app->session->setFlash('error', 'No tienes permiso para cerrar este ticket.');
+        return $this->redirect(['index']);
+    }
+
+    // Marcar como cerrado si aún no está cerrado
+    if ($ticket->status !== 'cerrado') {
+        $ticket->status = 'cerrado';
+        if ($ticket->save()) {
+            Yii::$app->session->setFlash('success', 'El ticket ha sido cerrado exitosamente.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Hubo un error al cerrar el ticket.');
+        }
+    }
+
+    return $this->redirect(['index']); // Redirigir a la lista de tickets
+}
+
+public function actionVerRespuesta($id)
+{
+    // Buscar la respuesta vinculada al ticket
+    $respuesta = Respuesta::find()->where(['id_ticket' => $id])->one();
+
+    if (!$respuesta) {
+        // Crear un modelo vacío para que se cargue el chat sin respuestas aún
+        $respuesta = new Respuesta();
+        $respuesta->id_ticket = $id;
+    }
+
+    // Renderizar la vista de respuesta con el modelo (aunque esté vacío)
+    return $this->render('/respuesta/view', [
+        'model' => $respuesta,
+    ]);
+}
+
+
+
     
 }

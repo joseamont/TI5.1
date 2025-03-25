@@ -5,28 +5,57 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\models\Permiso;
 use app\models\User;
+
 
 /** @var yii\web\View $this */
 /** @var app\models\UsuarioHorSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Usuario Hors';
+if (!Permiso::seccion('usuario_hor')) {
+    return $this->render('/site/error', [
+        'name' => 'Permiso denegado',
+        'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+    ]);
+}
+$form = '';
+
+$this->title = 'Horario Trabajador';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="usuario-hor-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<h3> <?= Html::encode($this->title) ?> </h3>
+    <hr>
 
-    <p>
-        <?= Html::a('Create Usuario Hor', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php
+    /** Verificar permiso */
+    if (Permiso::accion('usuario_hor', 'create')) {
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        //  Crear un nuevo rol utilizando _form.php en el modal 'modalForm' de abajo
+        echo Html::a('Nuevo usuario horario', ['#'], [
+            'class' => 'btn  btn-sm btn-outline-success',
+            'data-bs-toggle' => 'modal',
+            'data-bs-target' => '#modalForm',
+        ]);
+        
+        $form = $this->render('_form', ['model' => new UsuarioHor(), 'accion' => 'create']);
+    }
+    ?>
 
-    <?= GridView::widget([
+
+<br><br>
+
+<?= GridView::widget([
+        /** dataProvider poblado desde TicketController - actionIndex() */
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        /** Formado de botones de paginación */
+        'pager' => [
+            'class' => \yii\bootstrap5\LinkPager::class,
+            'firstPageLabel' => 'Inicio ',
+            'lastPageLabel' => ' Último',
+        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -38,6 +67,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     $username = $model->user ? $model->user->username : 'Sin usuario'; 
                     
+                    /** Verificar permiso */
+                    if (Permiso::accion('usuario_hor', 'view')) {
+                        return Html::a(
+                            $username,
+                            ['view', 'id' => $model->id],
+                            ['class' => 'btn btn-outline-dark btn-sm']
+                        );
+                    }
+            
+                    return $username;
                 }
             ],
             'id_horario',

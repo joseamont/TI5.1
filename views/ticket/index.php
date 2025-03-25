@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Ticket;
+use app\models\respuesta;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -108,15 +109,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $statusLabel = $model->status == 'cerrado' ? 'Cerrado' : 'Sin Abrir';
-                    $btnClass = $model->status == 'cerrado' ? 'btn-secondary' : 'btn-warning';
-                    
-                    /** Verificar permiso */
+                    $btnClass = $model->status == 'cerrado' ? 'secondary' : 'warning';
+            
+                    /** Verificar permiso y permitir cerrar si no está cerrado */
                     if ($model->status != 'cerrado' && Permiso::accion('ticket', 'update')) {
                         return Html::a(
                             $statusLabel,
                             ['ticket/cerrar', 'id' => $model->id], // Llamada a la acción para cerrar
                             [
-                                'class' => "btn $btnClass btn-sm",
+                                'class' => "btn btn-$btnClass btn-sm",
                                 'data' => [
                                     'confirm' => '¿Estás seguro de que quieres cerrar este ticket?',
                                     'method' => 'post',
@@ -128,6 +129,53 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::tag('span', $statusLabel, ['class' => "badge bg-$btnClass"]);
                 }
             ],
+
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{detalle}', // Solo dejamos este botón personalizado
+                'buttons' => [
+                    'detalle' => function ($url, $model) {
+                        // Verificar si el usuario tiene id_rol != 3
+                        if (Yii::$app->user->identity->id_rol != 3) {
+                            return Html::a(
+                                'Ver Respuesta', 
+                                ['ticket/ver-respuesta', 'id' => $model->id], // Llama a la nueva acción
+                                [
+                                    'class' => 'btn btn-info btn-sm',
+                                ]
+                            );
+                        }
+                        // Si el usuario tiene id_rol = 3, no mostrar el botón
+                        return '';
+                    },
+                ],
+            ],
+                 
+            
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{tomar}', // Solo mostramos el botón "Tomar"
+                'buttons' => [
+                    'tomar' => function ($url, $model) {
+                        // Verificar si el usuario tiene id_rol = 3
+                        if (Yii::$app->user->identity->id_rol == 3) {
+                            return Html::a(
+                                'Tomar Ticket',
+                                ['ticket/tomar', 'id' => $model->id], // Redirige a la acción 'tomar' del TicketController
+                                [
+                                    'class' => 'btn btn-success btn-sm',
+                                    'data' => [
+                                        'confirm' => '¿Estás seguro de que quieres tomar este ticket?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            );
+                        }
+                        return ''; // Si el usuario no tiene rol 3, no se muestra el botón
+                    },
+                ],
+            ],
+            
             
             //Boton habilitar
         ],

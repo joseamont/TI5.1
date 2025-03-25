@@ -2,7 +2,10 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\Suscripciones;
+use app\models\UsuarioPla;
 use yii\data\ActiveDataProvider;
 use app\models\SuscripcionesSearch;
 use yii\web\Controller;
@@ -185,4 +188,41 @@ class SuscripcionesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionContratar($id)
+    {
+        $suscripcion = Suscripciones::findOne($id);
+        if (!$suscripcion) {
+            throw new NotFoundHttpException('La suscripción no existe.');
+        }
+    
+        // Obtener el usuario autenticado
+        $usuario = Yii::$app->user->identity;
+    
+        // Verificar si el usuario ya tiene este plan contratado
+        $existeSuscripcion = UsuarioPla::find()
+            ->where(['id_usuario' => $usuario->id, 'id_suscripcion' => $suscripcion->id])
+            ->exists();
+    
+        if ($existeSuscripcion) {
+            Yii::$app->session->setFlash('warning', 'Ya tienes este plan contratado.');
+            return $this->redirect(['index']); // Redirigir a la lista de suscripciones
+        }
+    
+        // Asignar la suscripción al usuario
+        $UsuarioPla = new UsuarioPla();
+        $UsuarioPla->id_usuario = $usuario->id;
+        $UsuarioPla->id_suscripcion = $suscripcion->id;
+        $UsuarioPla->fecha_insercion = date('Y-m-d');
+        
+        if ($UsuarioPla->save()) {
+            Yii::$app->session->setFlash('success', '¡Has contratado la suscripción con éxito!');
+        } else {
+            Yii::$app->session->setFlash('error', 'Hubo un error al contratar la suscripción.');
+        }
+    
+        return $this->redirect(['index']); // Redirigir a la lista de suscripciones
+    }
+    
+
 }

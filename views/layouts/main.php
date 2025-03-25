@@ -82,8 +82,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                 Permiso::seccion('user') ? ['label' => 'Usuarios', 'url' => ['/user/index']] : '',
                 Permiso::seccion('ticket') ? 
                     ['label' => (Yii::$app->user->identity->id_rol == 4 ? 'Mis Tickets' : 'Tickets'), 'url' => ['/ticket/index']] : '', 
+                Permiso::seccion('horario') ? ['label' => 'Mis Tickets ', 'url' => ['/usuario-tic/index']] : '',
 
-                Permiso::seccion('asistencia') ? ['label' => 'Asistencias', 'url' => ['/asistencia/index']] : '',
+                //modificar arriba
+                Permiso::seccion('asistencia') ? 
+                    ['label' => (Yii::$app->user->identity->id_rol == 3 ? 'Mis asistencias' : 'Asistencias'), 'url' => ['/asistencia/index']] : '',
                 Permiso::seccion('usuario_cal') ? 
                     ['label' => (Yii::$app->user->identity->id_rol == 3 ? 'Mis Calificaciones' : 'Calificaciones'), 'url' => ['/usuario-cal/index']] : '', 
                 
@@ -104,7 +107,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'url' => ['#'],
                     'items' => [
                         Permiso::seccion('horario') ? ['label' => 'Horarios', 'url' => ['/horario/index']] : '',
-                        Permiso::seccion('usuario_hor') ? ['label' => 'Horarios Trabajadores', 'url' => ['/usuario-hor/index']] : '',
+                        Permiso::seccion('usuario_hor') ? 
+                        [               'label' => (Yii::$app->user->identity->id_rol == 3 ? 'Mi Horario' : 'Horarios Trabajadores'), 'url' => ['/usuario-hor/index']] : '',
                     ]
                 ] : '',
 

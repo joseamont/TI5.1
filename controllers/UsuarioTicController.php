@@ -2,19 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\Horario;
-use yii\data\ActiveDataProvider;
-use app\models\HorarioSearch;
+use app\models\UsuarioTic;
+use app\models\UsuarioTicSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-use app\models\Permiso;
-
 /**
- * HorarioController implements the CRUD actions for Horario model.
+ * UsuarioTicController implements the CRUD actions for UsuarioTic model.
  */
-class HorarioController extends Controller
+class UsuarioTicController extends Controller
 {
     /**
      * @inheritDoc
@@ -35,71 +32,42 @@ class HorarioController extends Controller
     }
 
     /**
-     * Lists all Horario models.
+     * Lists all UsuarioTic models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        if (!Permiso::accion('horario', 'index')) {
-            return $this->render('/site/error', [
-                'name' => 'Permiso denegado',
-                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
-            ]);
-        }
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => Horario::find(),
-            'pagination' => [
-                'pageSize' => 25
-            ],
-           /* 'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ]
-            ],
-            */
-        ]);
+        $searchModel = new UsuarioTicSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
     /**
-     * Displays a single Horario model.
+     * Displays a single UsuarioTic model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        if (!Permiso::accion('horario', 'view')) {
-            return $this->render('/site/error', [
-                'name' => 'Permiso denegado',
-                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
-            ]);
-        }
-
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Horario model.
+     * Creates a new UsuarioTic model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        if (!Permiso::accion('horario', 'create')) {
-            return $this->render('/site/error', [
-                'name' => 'Permiso denegado',
-                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
-            ]);
-        }
-
-        $model = new Horario();
+        $model = new UsuarioTic();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -115,7 +83,7 @@ class HorarioController extends Controller
     }
 
     /**
-     * Updates an existing Horario model.
+     * Updates an existing UsuarioTic model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -133,23 +101,9 @@ class HorarioController extends Controller
             'model' => $model,
         ]);
     }
-        public function actionUpdateEstatus($id)
-    {
-        if (!Permiso::accion('horario', 'update-estatus')) {
-            return $this->render('/site/error', [
-                'name' => 'Permiso denegado',
-                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
-            ]);
-        }
-
-        $model = $this->findModel($id);
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-        }
-        return $this->redirect(['index']);
-    }
 
     /**
-     * Deletes an existing Horario model.
+     * Deletes an existing UsuarioTic model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -157,28 +111,21 @@ class HorarioController extends Controller
      */
     public function actionDelete($id)
     {
-        if (!Permiso::accion('horario', 'delete')) {
-            return $this->render('/site/error', [
-                'name' => 'Permiso denegado',
-                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
-            ]);
-        }
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Horario model based on its primary key value.
+     * Finds the UsuarioTic model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Horario the loaded model
+     * @return UsuarioTic the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Horario::findOne(['id' => $id])) !== null) {
+        if (($model = UsuarioTic::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

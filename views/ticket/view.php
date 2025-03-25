@@ -2,8 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use app\models\Ticket;
 use yii\grid\GridView;
+use app\models\Ticket;
 
 /** @var yii\web\View $this */
 /** @var app\models\Ticket $model */
