@@ -75,4 +75,13 @@ class Suscripciones extends \yii\db\ActiveRecord
     {
         return $this->hasMany(UsuarioPla::class, ['id_suscripcion' => 'id']);
     }
+
+    // En app\models\Suscripciones.php
+
+public function getUsuarios()
+{
+    return $this->hasMany(\app\models\User::class, ['id' => 'id_usuario'])
+                ->viaTable('usuario_pla', ['id_suscripcion' => 'id']);
+}
+
 }

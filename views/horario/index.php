@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </span>
                     </div>
                 </div>
-                
+
                 <div class="card-body pt-2 pb-4">
                     <div class="d-flex align-items-center mb-3">
                         <i class="bi bi-clock-fill me-2" style="color: #0C4B54; font-size: 1.2rem;"></i>
@@ -63,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="fw-bold"><?= Yii::$app->formatter->asTime($model->hora_inicio) ?></span>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex align-items-center mb-4">
                         <i class="bi bi-clock-fill me-2" style="color: #0C4B54; font-size: 1.2rem;"></i>
                         <div>
@@ -71,63 +71,71 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="fw-bold"><?= Yii::$app->formatter->asTime($model->hora_fin) ?></span>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between pt-2 border-top">
-                        <?= Html::a('<i class="bi bi-pencil-square me-1"></i> Editar', ['update', 'id' => $model->id], [
-                            'class' => 'btn btn-sm btn-outline-primary rounded-pill px-3'
-                        ]) ?>
-                        
-                        <?= Html::a('<i class="bi bi-people-fill me-1"></i> Asignar', ['#'], [
-                            'class' => 'btn btn-sm btn-primary rounded-pill px-3',
-                            'data-bs-toggle' => 'modal',
-                            'data-bs-target' => '#assignModal'.$model->id,
-                        ]) ?>
-                        
-                        <?= Html::a('<i class="bi bi-trash me-1"></i>', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-sm btn-outline-danger rounded-circle',
-                            'data' => [
-                                'confirm' => '¿Está seguro que desea eliminar este horario?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
+
+                        <?php if (Permiso::accion('usuario_hor', 'update')): ?>
+                            <?= Html::a('<i class="bi bi-people-fill me-1"></i> Asignar', ['#'], [
+                                'class' => 'btn btn-sm btn-primary rounded-pill px-3',
+                                'data-bs-toggle' => 'modal',
+                                'data-bs-target' => '#assignModal'.$model->id,
+                            ]) ?>
+                        <?php endif; ?>
+
+                        <?php if (Permiso::accion('horario', 'delete')): ?>
+                            <?= Html::a('<i class="bi bi-trash me-1"></i>', ['delete', 'id' => $model->id], [
+                                'class' => 'btn btn-sm btn-outline-danger rounded-circle',
+                                'data' => [
+                                    'confirm' => '¿Está seguro que desea eliminar este horario?',
+                                    'method' => 'post',
+                                ],
+                            ]) ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal para asignar horario -->
         <div class="modal fade" id="assignModal<?= $model->id ?>" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content border-0 shadow">
-                    <div class="modal-header" style="background-color: #0C4B54; color: white;">
-                        <h5 class="modal-title">
-                            <i class="bi bi-people-fill me-2"></i>Asignar Horario
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Asignar el horario <strong><?= Html::encode($model->dias) ?></strong> a:</p>
-                        <!-- Aquí iría el formulario de asignación -->
-                        <div class="form-group mb-3">
-                            <label class="form-label">Seleccionar empleado</label>
-                            <select class="form-select">
-                                <option selected>Seleccione un empleado</option>
-                                <option>Empleado 1</option>
-                                <option>Empleado 2</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="form-label">Fecha de inicio</label>
-                            <input type="date" class="form-control">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary rounded-pill">Guardar Asignación</button>
-                    </div>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header" style="background-color: #0C4B54; color: white;">
+                <h5 class="modal-title">
+                    <i class="bi bi-people-fill me-2"></i>Asignar Horario
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <p>Asignar el horario <strong><?= Html::encode($model->dias) ?></strong> a:</p>
+
+                <?php $form = \yii\widgets\ActiveForm::begin([
+                    'action' => ['index'], // Acción donde se manejará el POST
+                    'method' => 'post',
+                ]); ?>
+
+                <!-- Selección de usuario (excluyendo el id_usuario = 4) -->
+                <?= $form->field($usuarioHorModel, 'id_usuario')->dropDownList(
+                    \yii\helpers\ArrayHelper::map(app\models\User::find()->where(['!=', 'id', 4])->all(), 'id', 'username'),
+                    ['prompt' => 'Seleccionar empleado']
+                ) ?>
+
+                <!-- Campo oculto para el ID del horario -->
+                <?= $form->field($usuarioHorModel, 'id_horario')->hiddenInput(['value' => $model->id])->label(false) ?>
+
+                <!-- El campo de fecha de inserción ya no es necesario -->
+                <!-- Lo manejamos automáticamente en el controlador -->
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                <?= Html::submitButton('Guardar Asignación', ['class' => 'btn btn-primary rounded-pill']) ?>
+            </div>
+
+            <?php \yii\widgets\ActiveForm::end(); ?>
         </div>
+    </div>
+</div>
+
         <?php endforeach; ?>
     </div>
 

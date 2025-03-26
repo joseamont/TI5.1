@@ -2,13 +2,15 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Calificaciones;
+use app\models\Ticket;
 use app\models\CalificacionesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-use app\models\Permiso;
+
 /**
  * CalificacionesController implements the CRUD actions for Calificaciones model.
  */
@@ -66,22 +68,43 @@ class CalificacionesController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
-        $model = new Calificaciones();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+    public function actionCreate($ticket_id)
+{
+    // Buscar el ticket
+    $ticket = Ticket::findOne($ticket_id);
+    if (!$ticket) {
+        throw new NotFoundHttpException('El ticket no existe.');
     }
+
+    // Crear una nueva instancia del modelo de calificación
+    $model = new Calificaciones();
+    $model->id_ticket = $ticket_id; // Asociamos la calificación al ticket
+
+    // Validamos y guardamos la calificación
+    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        // Guardamos la calificación
+        if ($model->save()) {
+            // Actualizar el ticket con la ID de la calificación
+            $ticket->id_calificacion = $model->id; // Asignamos la ID de la calificación
+            $ticket->save(); // Guardamos el ticket con la nueva relación
+
+            // Mensaje de éxito
+            Yii::$app->session->setFlash('success', 'Gracias por calificar el servicio.');
+
+            // Redirigir a la vista del ticket
+            return $this->redirect(['ticket/view', 'id' => $ticket_id]); // Redirigir a la vista del ticket
+        } else {
+            // En caso de error al guardar la calificación
+            Yii::$app->session->setFlash('error', 'Hubo un error al guardar la calificación.');
+        }
+    }
+
+    return $this->render('create', [
+        'model' => $model,
+        'ticket' => $ticket,
+    ]);
+}
+
 
     /**
      * Updates an existing Calificaciones model.

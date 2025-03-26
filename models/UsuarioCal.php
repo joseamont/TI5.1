@@ -35,7 +35,8 @@ class UsuarioCal extends \yii\db\ActiveRecord
             [['id_usuario', 'id_calificaciones'], 'integer'],
             [['fecha_insercion'], 'safe'],
             [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['id_usuario' => 'id']],
-            [['id_calificaciones'], 'exist', 'skipOnError' => true, 'targetClass' => Calificaciones::class, 'targetAttribute' => ['id_calificaciones' => 'id']],
+            [['calificacion'], 'in', 'range' => ['Muy malo', 'Malo', 'Bueno', 'Excelente', 'Perfecto']],
+            [['calificacion'], 'default', 'value' => 'Bueno'], // Valor por defecto
         ];
     }
 
@@ -49,6 +50,7 @@ class UsuarioCal extends \yii\db\ActiveRecord
             'id_usuario' => 'Id Usuario',
             'id_calificaciones' => 'Id Calificaciones',
             'fecha_insercion' => 'Fecha Insercion',
+            'calificacion' => 'Calificación',
         ];
     }
 

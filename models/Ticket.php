@@ -128,4 +128,6 @@ public function getSuscripciones()
     return $this->hasOne(Suscripciones::class, ['id' => 'id_suscripcion']);
 }
 
+
+
 }

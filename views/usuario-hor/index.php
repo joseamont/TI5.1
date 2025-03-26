@@ -29,13 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <p class="text-muted mb-0">Asignación de horarios a trabajadores</p>
         </div>
         
-        <?php if (Permiso::accion('usuario_hor', 'create')): ?>
-            <?= Html::a('<i class="bi bi-plus-circle me-2"></i> Nuevo Horario Trabajador', ['#'], [
-                'class' => 'btn btn-primary btn-sm',
-                'data-bs-toggle' => 'modal',
-                'data-bs-target' => '#modalForm',
-            ]) ?>
-        <?php endif; ?>
     </div>
 
     <div class="row g-4">
@@ -45,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-header bg-transparent border-0 pt-3 pb-1">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="h6 mb-0 fw-bold" style="color: #0C4B54;">
-                            <?= $model->user ? $model->user->username : 'Sin usuario' ?>
+                            <?= $model->user ? $model->user->getNombreUsuario() : 'Sin usuario' ?>
                         </h4>
                         <span class="badge bg-secondary rounded-pill">ID: <?= $model->id ?></span>
                     </div>
@@ -71,19 +64,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 
                 <div class="card-footer bg-transparent border-0 pt-0 pb-3">
                     <div class="d-flex justify-content-end">
-                        <?php if (Permiso::accion('usuario_hor', 'view')): ?>
-                            <?= Html::a('<i class="bi bi-eye"></i>', ['view', 'id' => $model->id], [
-                                'class' => 'btn btn-sm btn-outline-primary rounded-circle me-2',
-                                'title' => 'Ver detalles'
-                            ]) ?>
-                        <?php endif; ?>
-                        
-                        <?php if (Permiso::accion('usuario_hor', 'update')): ?>
-                            <?= Html::a('<i class="bi bi-pencil"></i>', ['update', 'id' => $model->id], [
-                                'class' => 'btn btn-sm btn-outline-secondary rounded-circle me-2',
-                                'title' => 'Editar'
-                            ]) ?>
-                        <?php endif; ?>
                         
                         <?php if (Permiso::accion('usuario_hor', 'delete')): ?>
                             <?= Html::a('<i class="bi bi-trash"></i>', ['delete', 'id' => $model->id], [

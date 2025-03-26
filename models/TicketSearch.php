@@ -38,38 +38,29 @@ class TicketSearch extends Ticket
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
-        $query = Ticket::find();
+   // En tu modelo TicketSearch
+public function search($params, $query = null)
+{
+    // Si no se pasa un query, usamos el default
+    $query = $query ?: Ticket::find();
 
-        // add conditions that should always apply here
+    // Crear el data provider con el query filtrado
+    $dataProvider = new ActiveDataProvider([
+        'query' => $query,
+        'pagination' => [
+            'pageSize' => 25,
+        ],
+    ]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+    // Cargar los parámetros de búsqueda
+    $this->load($params);
 
-        $this->load($params);
+    // Aplicar filtros adicionales si es necesario
+    // $query->andFilterWhere(['status' => $this->status]); // Agregar más filtros aquí si es necesario
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+    return $dataProvider;
+}
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'id_usuario' => $this->id_usuario,
-            'id_suscripcion' => $this->id_suscripcion,
-            'fecha_apertura' => $this->fecha_apertura,
-            'fecha_cierre' => $this->fecha_cierre,
-            'id_calificacion' => $this->id_calificacion,
-        ]);
 
-        $query->andFilterWhere(['like', 'tipo', $this->tipo])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'descripcion', $this->descripcion]);
-
-        return $dataProvider;
-    }
+    
 }

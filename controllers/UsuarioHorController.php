@@ -196,4 +196,34 @@ class UsuarioHorController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    // En el controlador UsuarioHorController
+
+    public function actionAssign()
+    {
+        // Crear una nueva instancia del modelo UsuarioHor
+        $usuarioHorModel = new UsuarioHor();
+
+        // Verificar si es una solicitud POST
+        if (Yii::$app->request->isPost) {
+            // Cargar los datos del formulario en el modelo
+            if ($usuarioHorModel->load(Yii::$app->request->post())) {
+                // Intentar guardar el registro en la tabla usuario_hor
+                if ($usuarioHorModel->save()) {
+                    // Si se guarda correctamente, mostrar un mensaje de éxito
+                    Yii::$app->session->setFlash('success', 'Horario asignado con éxito.');
+                } else {
+                    // Si hay errores al guardar
+                    Yii::$app->session->setFlash('error', 'Hubo un error al asignar el horario.');
+                }
+                // Redirigir a la vista deseada (por ejemplo, a la lista de horarios)
+                return $this->redirect(['horario/index']);
+            }
+        }
+
+        // Si no es un POST, redirigir
+        return $this->redirect(['horario/index']);
+    }
 }
+
+

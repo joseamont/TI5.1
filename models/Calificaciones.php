@@ -28,7 +28,10 @@ class Calificaciones extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['calificacion'], 'required'],
             [['calificacion'], 'integer'],
+            [['calificacion'], 'in', 'range' => [1, 10]], // Solo permitir calificación entre 1 y 10
+            [['ticket_id'], 'required'],
         ];
     }
 

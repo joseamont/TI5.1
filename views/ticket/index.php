@@ -62,20 +62,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Nombre de Usuario',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $username = $model->user ? $model->user->username : 'Sin usuario'; 
+                    // Usamos la función getNombreUsuario() para obtener el nombre completo
+                    $nombreUsuario = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario'; 
                     
                     /** Verificar permiso */
                     if (Permiso::accion('ticket', 'view')) {
                         return Html::a(
-                            $username,
+                            $nombreUsuario,
                             ['view', 'id' => $model->id],
                             ['class' => 'btn btn-outline-dark btn-sm']
                         );
                     }
             
-                    return $username;
+                    return $nombreUsuario;
                 }
             ],
+            
             
             
             // Boton nombre suscripcion 
@@ -87,10 +89,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     $nombreSuscripcion = $model->suscripcion ? $model->suscripcion->nombre : 'Sin suscripción'; 
                     
                     /** Verificar permiso */
-                    if ($model->suscripcion && Permiso::accion('suscripcion', 'view')) {
+                    if ($model->suscripcion && Permiso::accion('suscripciones', 'view')) {
                         return Html::a(
                             $nombreSuscripcion,
-                            ['suscripcion/view', 'id' => $model->id_suscripcion],
+                            ['suscripciones/view', 'id' => $model->id_suscripcion],
                             ['class' => 'btn btn-outline-primary btn-sm']
                         );
                     }
@@ -126,9 +128,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         );
                     }
             
+            
+                    // Si no está cerrado, solo muestra el estado con el badge correspondiente
                     return Html::tag('span', $statusLabel, ['class' => "badge bg-$btnClass"]);
                 }
             ],
+            
 
             [
                 'class' => 'yii\grid\ActionColumn',

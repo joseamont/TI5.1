@@ -237,10 +237,10 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'url' => ['/asistencia/index']
                 ] : '',
                 
-                Permiso::seccion('usuario_cal') ? [
+                /*Permiso::seccion('usuario_cal') ? [
                     'label' => '<i class="bi bi-journal-check"></i> <span>' . (Yii::$app->user->identity->id_rol == 3 ? 'Mis Calificaciones' : 'Calificaciones') . '</span>', 
                     'url' => ['/usuario-cal/index']
-                ] : '', 
+                ] : '', */
                 
                 Permiso::seccion('suscripciones') ? [
                     'label' => '<i class="bi bi-credit-card"></i> <span>Planes</span>',

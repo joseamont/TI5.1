@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\models\Ticket;
+use app\models\Permiso;
 
 /** @var yii\web\View $this */
 /** @var app\models\Ticket $model */
@@ -17,23 +18,45 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'id_usuario',
-            'id_suscripcion',
+            [
+                'attribute' => 'id_usuario',
+                'label' => 'Nombre de Usuario',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    // Usamos la función getNombreUsuario() para obtener el nombre completo
+                    $nombreUsuario = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario'; 
+                    
+            
+                    return $nombreUsuario;
+                }
+            ],
+            [
+                'attribute' => 'id_suscripcion',
+                'label' => 'Nombre del Plan',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    // Acceder a la relación suscripcion y obtener el nombre del plan
+                    $nombrePlan = $model->suscripcion ? $model->suscripcion->nombre : 'Sin suscripción';
+            
+                    // Verificar si el usuario tiene permiso y si hay una suscripción
+                    if ($model->suscripcion && Permiso::accion('suscripciones', 'view')) {
+                        // Crear el enlace solo si el usuario tiene permiso
+                        return Html::a(
+                            $nombrePlan,
+                            ['suscripciones/view', 'id' => $model->id_suscripcion],
+                            ['class' => 'btn btn-outline-primary btn-sm']
+                        );
+                    }
+            
+                    // Si no hay suscripción o no hay permiso, solo mostrar el nombre
+                    return $nombrePlan;
+                }
+            ],
+            
+            
             'tipo',
             'fecha_apertura',
             'fecha_cierre',

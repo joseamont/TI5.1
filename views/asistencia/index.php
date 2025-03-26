@@ -64,20 +64,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Nombre de Usuario',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $username = $model->user ? $model->user->username : 'Sin usuario'; 
-                    
+                    // Usamos la función getNombreUsuario() para obtener el nombre completo
+                    $nombreUsuario = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario';
+            
                     /** Verificar permiso */
                     if (Permiso::accion('asistencia', 'view')) {
                         return Html::a(
-                            $username,
+                            $nombreUsuario,
                             ['view', 'id' => $model->id],
                             ['class' => 'btn btn-outline-dark btn-sm']
                         );
                     }
             
-                    return $username;
+                    return $nombreUsuario;
                 }
             ],
+            
             'fecha',
             'hora_entrada',
             'hora_salida',

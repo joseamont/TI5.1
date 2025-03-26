@@ -65,14 +65,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'Usuario',
                         'format' => 'raw',
                         'value' => function ($model) {
-                            $username = $model->user ? $model->user->username : 'Sin usuario';
+                            // Usamos la función getNombreUsuario() para obtener el nombre completo del usuario
+                            $nombreUsuario = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario';
                             $btnClass = Permiso::accion('usuario_pla', 'view') ? 'btn btn-sm btn-outline-primary' : '';
-                            
+                    
                             return Permiso::accion('usuario_pla', 'view') 
-                                ? Html::a($username, ['view', 'id' => $model->id], ['class' => $btnClass])
-                                : $username;
+                                ? Html::a($nombreUsuario, ['view', 'id' => $model->id], ['class' => $btnClass])
+                                : $nombreUsuario;
                         }
                     ],
+                    
                     [
                         'attribute' => 'id_suscripcion',
                         'label' => 'Plan',

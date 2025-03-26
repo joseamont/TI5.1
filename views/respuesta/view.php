@@ -33,11 +33,15 @@ $isClosed = ($ticket && $ticket->status == 'cerrado');
 
     <div class="chat-header">
         <h1><?= Html::encode($this->title) ?></h1>
-        <?php if ($isClosed): ?>
-            <span class="badge badge-status closed">Cerrado</span>
-        <?php else: ?>
-            <span class="badge badge-status open">Abierto</span>
-        <?php endif; ?>
+        <div>
+
+
+            <?php if ($isClosed): ?>
+                <span class="badge badge-status closed">Cerrado</span>
+            <?php else: ?>
+                <span class="badge badge-status open">Abierto</span>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div class="chat-container-wrapper">
@@ -117,6 +121,8 @@ $isClosed = ($ticket && $ticket->status == 'cerrado');
     </div>
 
 </div>
+
+<!-- Resto del código CSS y JS permanece igual -->
 
 <style>
     :root {

@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\Horario;
 use yii\data\ActiveDataProvider;
 use app\models\HorarioSearch;
@@ -47,24 +49,40 @@ class HorarioController extends Controller
                 'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
             ]);
         }
-
+    
         $dataProvider = new ActiveDataProvider([
             'query' => Horario::find(),
             'pagination' => [
                 'pageSize' => 25
             ],
-           /* 'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ]
-            ],
-            */
         ]);
-
+    
+        // Verificar si se ha enviado el formulario de asignación
+        if (Yii::$app->request->isPost) {
+            $usuarioHorModel = new \app\models\UsuarioHor();
+    
+            // Obtener los datos enviados del formulario
+            $usuarioHorModel->id_usuario = Yii::$app->request->post('UsuarioHor')['id_usuario'];
+            $usuarioHorModel->id_horario = Yii::$app->request->post('UsuarioHor')['id_horario'];
+    
+            // Establecer la fecha de inserción automáticamente
+            $usuarioHorModel->fecha_insercion = date('Y-m-d'); // Asigna la fecha actual
+    
+            // Guardar la asignación si los datos son válidos
+            if ($usuarioHorModel->save()) {
+                Yii::$app->session->setFlash('success', 'Horario asignado exitosamente.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Error al asignar el horario.');
+            }
+        }
+    
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'usuarioHorModel' => new \app\models\UsuarioHor(), // Pasa el modelo de asignación
         ]);
     }
+    
+    
     /**
      * Displays a single Horario model.
      * @param int $id ID

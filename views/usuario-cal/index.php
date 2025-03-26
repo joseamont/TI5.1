@@ -28,27 +28,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <h3> <?= Html::encode($this->title) ?> </h3>
     <hr>
 
-    <?php
-    /** Verificar permiso */
-    if (Permiso::accion('usuario_cal', 'create')) {
-
-        //  Crear un nuevo rol utilizando _form.php en el modal 'modalForm' de abajo
-        echo Html::a('Nueva calificacion ticket', ['#'], [
-            'class' => 'btn  btn-sm btn-outline-success',
-            'data-bs-toggle' => 'modal',
-            'data-bs-target' => '#modalForm',
-        ]);
-        
-        $form = $this->render('_form', ['model' => new UsuarioCal(), 'accion' => 'create']);
-    }
-    ?>
-
 <br><br>
 
 <?= GridView::widget([
-        /** dataProvider poblado desde TicketController - actionIndex() */
+        /** dataProvider poblado desde UsuarioCalController - actionIndex() */
         'dataProvider' => $dataProvider,
-        /** Formado de botones de paginación */
+        /** Formato de botones de paginación */
         'pager' => [
             'class' => \yii\bootstrap5\LinkPager::class,
             'firstPageLabel' => 'Inicio ',
@@ -63,52 +48,38 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Nombre de Usuario',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $username = $model->user ? $model->user->username : 'Sin usuario'; 
+                    $nombreUsuario = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario'; 
                     
                     /** Verificar permiso */
                     if (Permiso::accion('asistencia', 'view')) {
                         return Html::a(
-                            $username,
+                            $nombreUsuario,
                             ['view', 'id' => $model->id],
                             ['class' => 'btn btn-outline-dark btn-sm']
                         );
                     }
             
-                    return $username;
+                    return $nombreUsuario;
                 }
             ],
             [
-                'attribute' => 'id_calificaciones',
-                'label' => 'Calificacion',
+                'attribute' => 'calificacion',
+                'label' => 'Calificación',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $nombreCalificacion = $model->calificacion ? $model->calificacion->calificacion : 'Sin Calificacion'; 
-            
-                    return $nombreCalificacion;
+                    // Consulta directa a la tabla UsuarioCal para obtener la calificación asociada
+                    $usuarioCal = UsuarioCal::findOne(['id_usuario' => $model->id_usuario]);
+                    
+                    // Verificamos si existe una calificación asociada
+                    if ($usuarioCal) {
+                        return $usuarioCal->calificacion;
+                    } else {
+                        return 'Sin Calificación'; // En caso de que no haya calificación
+                    }
                 }
             ],
+            
             'fecha_insercion',
         ],
     ]); ?>
 
-
-</div>
-
-<!-- Modal donde se presenta _form para crear un nuevo rol  -->
-<div class="modal fade modal-lg" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header  bg-info">
-                <h3 class="modal-title" id="modalFormLabel">
-                    Nuevo Ticket
-                </h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body" id="modal-body">
-                <div id="modalFormBody">
-                    <?= $form; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

@@ -7,6 +7,7 @@ use Yii;
 use app\models\Ticket;
 use app\models\Respuesta;
 use app\models\UsuarioTic;
+use app\models\UsuarioCal;
 use yii\data\ActiveDataProvider;
 use app\models\TicketSearch;
 use yii\web\Controller;
@@ -45,6 +46,7 @@ class TicketController extends Controller
      */
     public function actionIndex()
     {
+        // Verificar permiso
         if (!Permiso::accion('ticket', 'index')) {
             return $this->render('/site/error', [
                 'name' => 'Permiso denegado',
@@ -56,26 +58,24 @@ class TicketController extends Controller
         $userId = Yii::$app->user->identity->id;
         $userRol = Yii::$app->user->identity->id_rol;
     
-        // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
-        $query = ($userRol == 4 ) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
+        // Si el usuario tiene rol 4, solo verá sus propios tickets; de lo contrario, verá todos los tickets
+        $query = ($userRol == 4) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
     
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 25
-            ],
-           /* 'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ]
-            ],
-            */
-        ]);
+        // Crear el modelo de búsqueda
+        $searchModel = new TicketSearch();
+    
+        // Pasar el query filtrado por id_usuario al método search() del TicketSearch
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $query); // Pasamos el query filtrado
+    
+        // Configurar la paginación
+        $dataProvider->pagination = ['pageSize' => 25];
     
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+    
     
 
     /**
@@ -215,6 +215,11 @@ class TicketController extends Controller
     // Marcar como cerrado si aún no está cerrado
     if ($ticket->status !== 'cerrado') {
         $ticket->status = 'cerrado';
+        
+        // Asignar la fecha y hora de cierre al ticket
+        $ticket->fecha_cierre = date('Y-m-d H:i:s'); // Fecha y hora actual
+        
+        // Guardar los cambios
         if ($ticket->save()) {
             Yii::$app->session->setFlash('success', 'El ticket ha sido cerrado exitosamente.');
         } else {
@@ -224,6 +229,7 @@ class TicketController extends Controller
 
     return $this->redirect(['index']); // Redirigir a la lista de tickets
 }
+
 
 public function actionVerRespuesta($id)
 {
@@ -276,6 +282,49 @@ public function actionTomar($id)
 
     return $this->redirect(['index']); // Redirige a la lista de tickets
 }
+
+public function actionCalificar($id)
+{
+    // Buscar el ticket
+    $ticket = Ticket::findOne($id);
+    if (!$ticket) {
+        throw new NotFoundHttpException('El ticket no existe.');
+    }
+
+    // Verificar si ya está calificado
+    if ($ticket->id_calificacion) {
+        Yii::$app->session->setFlash('error', 'Este ticket ya ha sido calificado.');
+        return $this->redirect(['ticket/view', 'id' => $id]);
+    }
+
+    // Crear una nueva instancia del modelo UsuarioCal
+    $usuarioCal = new UsuarioCal();
+    $usuarioCal->id_usuario = Yii::$app->user->id; // Asumiendo que el usuario está logueado
+    $usuarioCal->calificacion = 'Bueno'; // Valor por defecto si no se envía un valor
+
+    // Si se está enviando la calificación a través de un formulario
+    if ($usuarioCal->load(Yii::$app->request->post()) && $usuarioCal->validate()) {
+        // Guardar la calificación
+        if ($usuarioCal->save()) {
+            // Actualizar el ticket con la ID de la calificación
+            $ticket->id_calificacion = $usuarioCal->id;
+            if ($ticket->save()) {
+                Yii::$app->session->setFlash('success', 'Gracias por calificar el ticket.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Hubo un error al actualizar el ticket.');
+            }
+        } else {
+            Yii::$app->session->setFlash('error', 'Hubo un error al guardar la calificación.');
+        }
+
+    } else {
+        Yii::$app->session->setFlash('error', 'No se pudo cargar los datos de calificación.');
+    }
+
+    return $this->redirect(['ticket/view', 'id' => $id]); // Redirigir a la vista del ticket
+}
+
+
 
 
 

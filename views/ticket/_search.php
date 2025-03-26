@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use app\models\User
+use app\models\User;
 
 /** @var yii\web\View $this */
 /** @var app\models\TicketSearch $model */

@@ -1,20 +1,24 @@
 <?php
-
 use yii\helpers\Html;
-
-/** @var yii\web\View $this */
-/** @var app\models\Calificaciones $model */
-
-$this->title = 'Create Calificaciones';
-$this->params['breadcrumbs'][] = ['label' => 'Calificaciones', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+use yii\widgets\ActiveForm;
 ?>
-<div class="calificaciones-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="calificaciones-form">
 
-    <?= $this->render('_form', [
-        'model' => $model,
+    <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'calificacion')->textInput([
+        'type' => 'number',
+        'min' => 1,
+        'max' => 10,
+        'step' => 1,
+        'placeholder' => 'Calificación del 1 al 10',
     ]) ?>
+
+    <div class="form-group">
+        <?= Html::submitButton('Guardar Calificación', ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
 
 </div>

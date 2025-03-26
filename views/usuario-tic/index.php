@@ -5,6 +5,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\models\Permiso;
+use app\models\User;
 
 /** @var yii\web\View $this */
 /** @var app\models\UsuarioTicSearch $searchModel */
@@ -30,8 +32,25 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'id_usuario',
+            [
+                'attribute' => 'id_usuario',
+                'label' => 'Nombre de Usuario',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $nombreUsuario = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario'; 
+                    
+                    /** Verificar permiso */
+                    if (Permiso::accion('user', 'view')) {
+                        return Html::a(
+                            $nombreUsuario,
+                            ['view', 'id' => $model->id],
+                            ['class' => 'btn btn-outline-dark btn-sm']
+                        );
+                    }
+            
+                    return $nombreUsuario;
+                }
+            ],
             'id_ticket',
             'fecha_insercion',
             [
