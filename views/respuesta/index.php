@@ -5,27 +5,35 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\models\Permiso;
 
 /** @var yii\web\View $this */
 /** @var app\models\RespuestaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+
+if (!Permiso::seccion('respuesta')) {
+    return $this->render('/site/error', [
+        'name' => 'Permiso denegado',
+        'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+    ]);
+}
+$form = '';
 
 $this->title = 'Respuestas';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="respuesta-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Respuesta', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <br><br>
     <?= GridView::widget([
+        /** dataProvider poblado desde RolController - actionIndex() */
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        /** Formado de botones de paginación */
+        'pager' => [
+            'class' => \yii\bootstrap5\LinkPager::class,
+            'firstPageLabel' => 'Inicio ',
+            'lastPageLabel' => ' Último',
+        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 

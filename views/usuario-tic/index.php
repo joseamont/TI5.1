@@ -10,22 +10,23 @@ use yii\grid\GridView;
 /** @var app\models\UsuarioTicSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Usuario Tics';
+$this->title = 'Tickets asignados';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="usuario-tic-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Usuario Tic', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
+        /** dataProvider poblado desde TicketController - actionIndex() */
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        /** Formado de botones de paginación */
+        'pager' => [
+            'class' => \yii\bootstrap5\LinkPager::class,
+            'firstPageLabel' => 'Inicio ',
+            'lastPageLabel' => ' Último',
+        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 

@@ -5,10 +5,12 @@ namespace app\controllers;
 use Yii;
 
 use app\models\Respuesta;
+use yii\data\ActiveDataProvider;
 use app\models\RespuestaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Permiso;
 
 /**
  * RespuestaController implements the CRUD actions for Respuesta model.
@@ -40,11 +42,27 @@ class RespuestaController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new RespuestaSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        if (!Permiso::accion('respuesta', 'index')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => Respuesta::find(),
+            'pagination' => [
+                'pageSize' => 25
+            ],
+           /* 'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -69,6 +87,13 @@ class RespuestaController extends Controller
      */
     public function actionCreate()
     {
+        if (!Permiso::accion('respuesta', 'create')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $model = new Respuesta();
 
         if ($this->request->isPost) {

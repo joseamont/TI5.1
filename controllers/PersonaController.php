@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use yii;
+
 /**
  * PersonaController implements the CRUD actions for Persona model.
  */
@@ -53,12 +55,30 @@ class PersonaController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView()
     {
+        $user = Yii::$app->user->identity; // Usuario autenticado
+
+        if (!$user || !$user->id_persona) {
+            throw new NotFoundHttpException('No se encontró la información de tu perfil.');
+        }
+
+        $model = $this->findModel($user->id_persona);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
+
+    protected function findModel($id)
+    {
+        if (($model = Persona::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('No se encontró la información del perfil.');
+    }
+
 
     /**
      * Creates a new Persona model.
@@ -123,12 +143,4 @@ class PersonaController extends Controller
      * @return Persona the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = Persona::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
 }

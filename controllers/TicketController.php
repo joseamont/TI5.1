@@ -6,6 +6,7 @@ use Yii;
 
 use app\models\Ticket;
 use app\models\Respuesta;
+use app\models\UsuarioTic;
 use yii\data\ActiveDataProvider;
 use app\models\TicketSearch;
 use yii\web\Controller;
@@ -56,7 +57,7 @@ class TicketController extends Controller
         $userRol = Yii::$app->user->identity->id_rol;
     
         // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
-        $query = ($userRol == 4) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
+        $query = ($userRol == 4 ) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
     
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -239,6 +240,41 @@ public function actionVerRespuesta($id)
     return $this->render('/respuesta/view', [
         'model' => $respuesta,
     ]);
+}
+
+public function actionTomar($id)
+{
+    $ticket = Ticket::findOne($id); // Busca el ticket por ID
+
+    if (!$ticket) {
+        throw new NotFoundHttpException('El ticket no existe.');
+    }
+
+    // Verificar si el ticket ya fue tomado
+    $usuarioTicketExistente = UsuarioTic::find()->where(['id_ticket' => $id])->one();
+
+    if ($usuarioTicketExistente) {
+        Yii::$app->session->setFlash('error', 'Este ticket ya ha sido tomado por otro usuario.');
+        return $this->redirect(['index']);
+    }
+
+    // Crear un nuevo registro en la tabla usuario_tic
+    $usuarioTicket = new UsuarioTic();
+    $usuarioTicket->id_usuario = Yii::$app->user->identity->id; // ID del usuario autenticado
+    $usuarioTicket->id_ticket = $ticket->id;
+    $usuarioTicket->fecha_insercion = date('Y-m-d H:i:s'); // Fecha y hora actual
+
+    if ($usuarioTicket->save()) {
+        // Actualizar el estado del ticket a "Abierto"
+        $ticket->status = 'Abierto'; 
+        $ticket->save(false); // Guardar sin validaciones
+
+        Yii::$app->session->setFlash('success', 'Has tomado el ticket correctamente.');
+    } else {
+        Yii::$app->session->setFlash('error', 'Hubo un error al tomar el ticket.');
+    }
+
+    return $this->redirect(['index']); // Redirige a la lista de tickets
 }
 
 

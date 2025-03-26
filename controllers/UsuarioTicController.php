@@ -2,11 +2,15 @@
 
 namespace app\controllers;
 
+use Yii;
+
 use app\models\UsuarioTic;
+use app\models\Permiso;
 use app\models\UsuarioTicSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * UsuarioTicController implements the CRUD actions for UsuarioTic model.
@@ -38,11 +42,34 @@ class UsuarioTicController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new UsuarioTicSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
+        if (!Permiso::accion('usuario_tic', 'index')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+    
+        // Obtener el ID del usuario y su rol
+        $userId = Yii::$app->user->identity->id;
+        $userRol = Yii::$app->user->identity->id_rol;
+    
+        // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
+        $query = ($userRol == 3) ? UsuarioTic::find()->where(['id_usuario' => $userId]) : UsuarioTic::find();
+    
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 25
+            ],
+           /* 'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
+    
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -55,6 +82,13 @@ class UsuarioTicController extends Controller
      */
     public function actionView($id)
     {
+        if (!Permiso::accion('usuario_tic', 'view')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -67,6 +101,13 @@ class UsuarioTicController extends Controller
      */
     public function actionCreate()
     {
+        if (!Permiso::accion('usario_tic', 'create')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $model = new UsuarioTic();
 
         if ($this->request->isPost) {
@@ -91,7 +132,17 @@ class UsuarioTicController extends Controller
      */
     public function actionUpdate($id)
     {
+        if (!Permiso::accion('usuario_tic', 'update')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $model = $this->findModel($id);
+
+        var_dump($this->request->post());
+
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -100,6 +151,21 @@ class UsuarioTicController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
+    }
+
+    public function actionUpdateEstatus($id)
+    {
+        if (!Permiso::accion('usuario_tic', 'update-estatus')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
+        $model = $this->findModel($id);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        }
+        return $this->redirect(['index']);
     }
 
     /**
@@ -111,6 +177,13 @@ class UsuarioTicController extends Controller
      */
     public function actionDelete($id)
     {
+        if (!Permiso::accion('usuario_tic', 'delete')) {
+            return $this->render('/site/error', [
+                'name' => 'Permiso denegado',
+                'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
+            ]);
+        }
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

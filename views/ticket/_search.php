@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use app\models\User
 
 /** @var yii\web\View $this */
 /** @var app\models\TicketSearch $model */
@@ -10,34 +12,43 @@ use yii\widgets\ActiveForm;
 
 <div class="ticket-search">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+<?php $form = ActiveForm::begin([
+    'action' => ['index'],
+    'method' => 'get',
+]); ?>
 
-    <?= $form->field($model, 'id') ?>
-
-    <?= $form->field($model, 'id_usuario') ?>
-
-    <?= $form->field($model, 'id_suscripcion') ?>
-
-    <?= $form->field($model, 'tipo') ?>
-
-    <?= $form->field($model, 'fecha_apertura') ?>
-
-    <?php // echo $form->field($model, 'fecha_cierre') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'descripcion') ?>
-
-    <?php // echo $form->field($model, 'id_calificacion') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+<div class="row border bg-light">
+    <div class="col-sm-1 my-auto">
+        <div class="form-group ">
+            <?= Html::submitButton('Filtrar', ['class' => 'btn btn-outline-secondary btn-sm']) ?>
+        </div>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'nombre') ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'apellidoPaterno') ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'apellidoMaterno') ?>
+    </div>
+    <div class="col-sm-2">
+        <?php
+        $i = ArrayHelper::map(User::find()->all(), 'id', 'nombre');
+        echo $form->field($model, 'id_rol')->dropDownList($i, ['prompt' => 'Seleccionar'])->label('Rol');
+        ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'username') ?>
+    </div>
+    <div class="col-sm-1">
+        <?php
+        echo $form->field($model, 'estatus')->dropDownList(['0' => 'Deshabilitado', '1' => 'Habilitado'], ['prompt' => 'Seleccionar']);
+        ?>
+    </div>
+</div>
+</div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 </div>

@@ -161,7 +161,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         if (Yii::$app->user->identity->id_rol == 3) {
                             return Html::a(
                                 'Tomar Ticket',
-                                ['ticket/tomar', 'id' => $model->id], // Redirige a la acción 'tomar' del TicketController
+                                ['ticket/tomar', 'id' => $model->id], // Llama a la acción "tomar" en el TicketController
                                 [
                                     'class' => 'btn btn-success btn-sm',
                                     'data' => [
