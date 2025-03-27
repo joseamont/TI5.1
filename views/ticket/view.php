@@ -79,12 +79,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'id',
             'tipo',
             'fecha_apertura',
             'fecha_cierre',
             'status',
-            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]) ?>
 

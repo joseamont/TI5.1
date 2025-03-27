@@ -28,14 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <h1 class="fw-bold" style="color: #0C4B54;">
             <i class="bi bi-credit-card me-2"></i><?= Html::encode($this->title) ?>
         </h1>
-        
-        <?php if (Permiso::accion('usuario_pla', 'create')): ?>
-            <?= Html::a('<i class="bi bi-plus-circle me-2"></i>Nuevo Plan Cliente', ['#'], [
-                'class' => 'btn btn-primary',
-                'data-bs-toggle' => 'modal',
-                'data-bs-target' => '#modalForm',
-            ]) ?>
-        <?php endif; ?>
     </div>
 
     <div class="card shadow-sm border-0">

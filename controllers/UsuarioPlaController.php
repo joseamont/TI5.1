@@ -167,7 +167,7 @@ class UsuarioPlaController extends Controller
      */
     public function actionDelete($id)
     {
-        if (!Permiso::accion('ticket', 'delete')) {
+        if (!Permiso::accion('usuario_pla', 'delete')) {
             return $this->render('/site/error', [
                 'name' => 'Permiso denegado',
                 'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'

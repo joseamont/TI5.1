@@ -19,27 +19,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             [
                 'attribute' => 'id_usuario',
                 'label' => 'Nombre de Usuario',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $username = $model->user ? $model->user->username : 'Sin usuario'; 
+                    $username = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario'; 
                     
             
                     return $username;
@@ -52,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
-<h2>Otros Tickets del Usuario</h2>
+<h2>Otras Asistencias del Usuario</h2>
 
 <?php
 $dataProvider = new \yii\data\ActiveDataProvider([
@@ -71,7 +59,7 @@ $dataProvider = new \yii\data\ActiveDataProvider([
         'label' => 'Nombre de Usuario',
         'format' => 'raw',
         'value' => function ($model) {
-            $username = $model->user ? $model->user->username : 'Sin usuario'; 
+            $username = $model->user ? $model->user->getNombreUsuario() : 'Sin usuario'; 
             
             /** Verificar permiso */
             if (Permiso::accion('asistencia', 'view')) {
@@ -88,7 +76,6 @@ $dataProvider = new \yii\data\ActiveDataProvider([
             'fecha',
             'hora_entrada',
             'hora_salida',
-        ['class' => 'yii\grid\ActionColumn'],
     ],
 ]) ?>
 

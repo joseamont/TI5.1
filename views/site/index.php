@@ -367,44 +367,6 @@ $this->title = 'Genesia - Streaming';
     </style>
 <?php endif; ?>
 
-<!-- Footer compacto mejorado -->
-<footer class="py-4" style="background: linear-gradient(135deg, #0C4B54 0%, #1A1A2E 100%); border-top: 1px solid rgba(255,255,255,0.1);">
-    <div class="container">
-        <div class="row align-items-center">
-            <!-- Logo y redes -->
-            <div class="col-lg-4 mb-3 mb-lg-0">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-play-circle-fill text-warning fs-4 me-2"></i>
-                    <span class="text-white fw-bold">GENESIA</span>
-                </div>
-                <div class="mt-2">
-                    <a href="#" class="text-white-50 me-2"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-white-50 me-2"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="text-white-50 me-2"><i class="bi bi-instagram"></i></a>
-                </div>
-            </div>
-
-            <!-- Enlaces -->
-            <div class="col-lg-4 mb-3 mb-lg-0">
-                <div class="d-flex justify-content-center flex-wrap gap-3">
-                    <a href="/inicio" class="text-white-50 text-decoration-none hover-text-warning">Inicio</a>
-                    <a href="/series" class="text-white-50 text-decoration-none hover-text-warning">Series</a>
-                    <a href="/peliculas" class="text-white-50 text-decoration-none hover-text-warning">Películas</a>
-                    <a href="/contacto" class="text-white-50 text-decoration-none hover-text-warning">Contacto</a>
-                </div>
-            </div>
-
-            <!-- Copyright -->
-            <div class="col-lg-4 text-lg-end">
-                <p class="text-white-50 mb-0 small">© 2025 Genesia Streaming. Todos los derechos reservados.</p>
-                <div class="mt-2">
-                    <a href="/terminos" class="text-white-50 small text-decoration-none hover-text-warning me-2">Términos</a>
-                    <a href="/privacidad" class="text-white-50 small text-decoration-none hover-text-warning">Privacidad</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
 
 <style>
 .hover-text-warning:hover {
