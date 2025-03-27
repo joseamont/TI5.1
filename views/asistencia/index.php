@@ -93,7 +93,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return $model->hora_salida ? Yii::$app->formatter->asTime($model->hora_salida, 'php:H:i') : '-';
                             }
                         ],
-                    ],
+                        'STATUS',
+                        ]
+                        
                 ]); ?>
             </div>
         </div>

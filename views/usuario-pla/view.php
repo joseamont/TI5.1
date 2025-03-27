@@ -246,3 +246,16 @@ $this->params['breadcrumbs'][] = $this->title;
         $('#deleteForm').submit();
     });
 </script>
+<?php
+$script = <<< JS
+$(document).ready(function () {
+    $('#ModalButtonMensaje').on('click', function (e) {
+        e.preventDefault(); // Evita la recarga de la página
+        let url = $(this).attr('data-url'); // Obtiene la URL del botón
+        $('#deleteForm').attr('action', url); // Asigna la URL al formulario
+        $('#deleteForm').submit(); // Envía el formulario
+    });
+});
+JS;
+$this->registerJs($script);
+?>

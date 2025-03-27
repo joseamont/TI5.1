@@ -73,4 +73,10 @@ class Asistencia extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'id_usuario']);
     }
+
+    public function getSTATUS()
+{
+    return $this->STATUS ? Yii::$app->formatter->asTime($this->STATUS, 'php:H:i') : '-';
+}
+
 }
