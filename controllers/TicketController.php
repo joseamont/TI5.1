@@ -283,5 +283,6 @@ public function actionTomar($id)
     return $this->redirect(['index']); // Redirige a la lista de tickets
 }
 
+
     
 }

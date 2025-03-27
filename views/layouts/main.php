@@ -365,7 +365,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                 ] : '', 
                 
                 Permiso::seccion('usuario_tic') ? [
-                    'label' => '<i class="bi bi-ticket-perforated"></i> <span>Mis Tickets</span>', 
+                    'label' => '<i class="bi bi-ticket-detailed"></i> <span>' . (Yii::$app->user->identity->id_rol == 3 ? 'Mis Tickets' : 'Tickets Asignados') . '</span>',
                     'url' => ['/usuario-tic/index'],
                     'active' => $this->context->route == 'usuario-tic/index'
                 ] : '',

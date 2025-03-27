@@ -56,23 +56,46 @@ class UsuarioTicController extends Controller
         // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
         $query = ($userRol == 3) ? UsuarioTic::find()->where(['id_usuario' => $userId]) : UsuarioTic::find();
     
+        // Verificar si existen filtros de búsqueda (por ejemplo, por estado de los tickets)
+        $searchParams = Yii::$app->request->queryParams;
+    
+        // Agregar filtros a la consulta si existen
+        if (!empty($searchParams)) {
+            // Filtrar por id_ticket si es necesario
+            if (isset($searchParams['id_ticket'])) {
+                $query->andFilterWhere(['id_ticket' => $searchParams['id_ticket']]);
+            }
+    
+            // Filtrar por fecha de inserción si es necesario
+            if (isset($searchParams['fecha_insercion'])) {
+                $query->andFilterWhere(['fecha_insercion' => $searchParams['fecha_insercion']]);
+            }
+    
+            // Puedes agregar más filtros como estado o cualquier otro campo que necesites
+            // if (isset($searchParams['status'])) {
+            //     $query->andFilterWhere(['status' => $searchParams['status']]);
+            // }
+        }
+    
+        // Crear el proveedor de datos con paginación
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
                 'pageSize' => 25
             ],
-           /* 'sort' => [
+            'sort' => [
                 'defaultOrder' => [
-                    'id' => SORT_DESC,
+                    'id' => SORT_DESC,  // Ordenar por ID descendente
                 ]
             ],
-            */
         ]);
     
+        // Renderizar la vista con el proveedor de datos
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
     }
+    
 
     /**
      * Displays a single UsuarioTic model.

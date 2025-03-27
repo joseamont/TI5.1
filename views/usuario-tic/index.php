@@ -23,6 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </h1>
     </div>
 
+
+
     <div class="row g-4">
         <?php foreach ($dataProvider->getModels() as $model): ?>
         <div class="col-12 col-md-6 col-lg-4">
@@ -34,24 +36,44 @@ $this->params['breadcrumbs'][] = $this->title;
                 
                 <div class="card-body">
                     <div class="ticket-meta mb-3">
+                        <!-- Mostrar quién levantó el ticket (usuario) -->
                         <div class="d-flex align-items-center mb-3">
                             <i class="bi bi-person-circle me-2" style="color: #0C4B54;"></i>
                             <div>
-                                <small class="text-muted">Operador Asignado</small>
+                                <small class="text-muted">Usuario que levantó el ticket</small>
                                 <h6 class="mb-0">
-                                    <?php if (Permiso::accion('user', 'view')): ?>
-                                        <?= Html::a(
-                                            $model->user ? $model->user->getNombreUsuario() : 'Sin usuario',
-                                            ['view', 'id' => $model->id],
-                                            ['class' => 'text-decoration-none', 'style' => 'color: #0C4B54;']
-                                        ) ?>
+                                    <?php if ($model->ticket && $model->ticket->usuario) : ?>
+                                        <?= Html::encode($model->ticket->usuario->getNombreUsuario()) ?>
                                     <?php else: ?>
-                                        <?= $model->user ? $model->user->getNombreUsuario() : 'Sin usuario' ?>
+                                        Sin usuario asignado
                                     <?php endif; ?>
                                 </h6>
                             </div>
                         </div>
-                        
+
+                        <?php if (Yii::$app->user->identity->id_rol != 3): ?>
+    <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-person-circle me-2" style="color: #0C4B54;"></i>
+        <div>
+            <small class="text-muted">Operador Asignado</small>
+            <h6 class="mb-0">
+                <?php if (Permiso::accion('user', 'view')): ?>
+                    <?= Html::a(
+                        $model->usuario ? $model->usuario->getNombreUsuario() : 'Sin usuario',
+                        ['view', 'id' => $model->id],
+                        ['class' => 'text-decoration-none', 'style' => 'color: #0C4B54;']
+                    ) ?>
+                <?php else: ?>
+                    <?= $model->usuario ? $model->usuario->getNombreUsuario() : 'Sin usuario' ?>
+                <?php endif; ?>
+            </h6>
+        </div>
+    </div>
+<?php endif; ?>
+
+
+
+                        <!-- Mostrar fecha de asignación -->
                         <div class="d-flex align-items-center mb-3">
                             <i class="bi bi-calendar me-2" style="color: #0C4B54;"></i>
                             <div>
@@ -61,13 +83,24 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </h6>
                             </div>
                         </div>
+
+                        <!-- Mostrar el status del ticket -->
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-circle me-2" style="color: #0C4B54;"></i>
+                            <div>
+                                <small class="text-muted">Estado del Ticket</small>
+                                <h6 class="mb-0">
+                                    <?= Html::encode($model->ticket->status) ?>
+                                </h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="card-footer bg-transparent border-0 text-center">
                     <?= Html::a(
                         '<i class="bi bi-eye-fill me-2"></i>Ver Respuesta', 
-                        ['ticket/ver-respuesta', 'id' => $model->id],
+                        ['ticket/ver-respuesta', 'id' => $model->id_ticket], // Asegurar que se usa el ID correcto
                         ['class' => 'btn btn-info']
                     ) ?>
                 </div>
@@ -89,6 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
     </div>
 </div>
+
 
 <!-- Incluir Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">

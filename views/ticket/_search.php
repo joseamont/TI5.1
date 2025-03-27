@@ -1,9 +1,9 @@
 <?php
-
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\models\User;
+use app\models\Ticket;
 
 /** @var yii\web\View $this */
 /** @var app\models\TicketSearch $model */
@@ -12,43 +12,56 @@ use app\models\User;
 
 <div class="ticket-search">
 
-<?php $form = ActiveForm::begin([
-    'action' => ['index'],
-    'method' => 'get',
-]); ?>
+    <?php $form = ActiveForm::begin([
+        'action' => ['index'],
+        'method' => 'get',
+        'options' => [
+            'class' => 'form-inline'
+        ]
+    ]); ?>
 
-<div class="row border bg-light">
-    <div class="col-sm-1 my-auto">
-        <div class="form-group ">
-            <?= Html::submitButton('Filtrar', ['class' => 'btn btn-outline-secondary btn-sm']) ?>
+    <div class="row mb-3 p-3" style="background-color: #f8f9fa; border-radius: 5px;">
+        <div class="col-md-2">
+            <?= $form->field($model, 'id')->textInput(['placeholder' => 'ID Ticket']) ?>
+        </div>
+        
+        <div class="col-md-2">
+            <?= $form->field($model, 'tipo')->dropDownList(
+                Ticket::getTipos(), 
+                ['prompt' => 'Todos los tipos']
+            ) ?>
+        </div>
+        
+        <div class="col-md-2">
+            <?= $form->field($model, 'status')->dropDownList(
+                [
+                    'abierto' => 'Abierto',
+                    'cerrado' => 'Cerrado',
+                    'pendiente' => 'Pendiente'
+                ],
+                ['prompt' => 'Todos los estados']
+            ) ?>
+        </div>
+        
+        <div class="col-md-2">
+            <?= $form->field($model, 'id_usuario')->dropDownList(
+                ArrayHelper::map(User::find()->all(), 'id', 'username'),
+                ['prompt' => 'Todos los usuarios']
+            ) ?>
+        </div>
+        
+        <div class="col-md-2">
+            <?= $form->field($model, 'fecha_apertura')->input('date') ?>
+        </div>
+        
+        <div class="col-md-2 d-flex align-items-end">
+            <div class="form-group">
+                <?= Html::submitButton('<i class="bi bi-funnel"></i> Filtrar', ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('<i class="bi bi-arrow-counterclockwise"></i>', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
+            </div>
         </div>
     </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'nombre') ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'apellidoPaterno') ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'apellidoMaterno') ?>
-    </div>
-    <div class="col-sm-2">
-        <?php
-        $i = ArrayHelper::map(User::find()->all(), 'id', 'nombre');
-        echo $form->field($model, 'id_rol')->dropDownList($i, ['prompt' => 'Seleccionar'])->label('Rol');
-        ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'username') ?>
-    </div>
-    <div class="col-sm-1">
-        <?php
-        echo $form->field($model, 'estatus')->dropDownList(['0' => 'Deshabilitado', '1' => 'Habilitado'], ['prompt' => 'Seleccionar']);
-        ?>
-    </div>
-</div>
-</div>
 
-<?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); ?>
 
 </div>
