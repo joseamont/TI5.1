@@ -36,6 +36,7 @@ $isClosed = ($ticket && $ticket->status == 'cerrado');
         <div>
 
 
+
             <?php if ($isClosed): ?>
                 <span class="badge badge-status closed">Cerrado</span>
             <?php else: ?>

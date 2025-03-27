@@ -283,50 +283,5 @@ public function actionTomar($id)
     return $this->redirect(['index']); // Redirige a la lista de tickets
 }
 
-public function actionCalificar($id)
-{
-    // Buscar el ticket
-    $ticket = Ticket::findOne($id);
-    if (!$ticket) {
-        throw new NotFoundHttpException('El ticket no existe.');
-    }
-
-    // Verificar si ya está calificado
-    if ($ticket->id_calificacion) {
-        Yii::$app->session->setFlash('error', 'Este ticket ya ha sido calificado.');
-        return $this->redirect(['ticket/view', 'id' => $id]);
-    }
-
-    // Crear una nueva instancia del modelo UsuarioCal
-    $usuarioCal = new UsuarioCal();
-    $usuarioCal->id_usuario = Yii::$app->user->id; // Asumiendo que el usuario está logueado
-    $usuarioCal->calificacion = 'Bueno'; // Valor por defecto si no se envía un valor
-
-    // Si se está enviando la calificación a través de un formulario
-    if ($usuarioCal->load(Yii::$app->request->post()) && $usuarioCal->validate()) {
-        // Guardar la calificación
-        if ($usuarioCal->save()) {
-            // Actualizar el ticket con la ID de la calificación
-            $ticket->id_calificacion = $usuarioCal->id;
-            if ($ticket->save()) {
-                Yii::$app->session->setFlash('success', 'Gracias por calificar el ticket.');
-            } else {
-                Yii::$app->session->setFlash('error', 'Hubo un error al actualizar el ticket.');
-            }
-        } else {
-            Yii::$app->session->setFlash('error', 'Hubo un error al guardar la calificación.');
-        }
-
-    } else {
-        Yii::$app->session->setFlash('error', 'No se pudo cargar los datos de calificación.');
-    }
-
-    return $this->redirect(['ticket/view', 'id' => $id]); // Redirigir a la vista del ticket
-}
-
-
-
-
-
     
 }
