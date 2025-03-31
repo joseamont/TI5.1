@@ -60,7 +60,7 @@ class UsuarioHorController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 25
+                'pageSize' => 15
             ],
            /* 'sort' => [
                 'defaultOrder' => [
@@ -201,28 +201,69 @@ class UsuarioHorController extends Controller
 
     public function actionAssign()
     {
-        // Crear una nueva instancia del modelo UsuarioHor
-        $usuarioHorModel = new UsuarioHor();
-
-        // Verificar si es una solicitud POST
-        if (Yii::$app->request->isPost) {
-            // Cargar los datos del formulario en el modelo
-            if ($usuarioHorModel->load(Yii::$app->request->post())) {
-                // Intentar guardar el registro en la tabla usuario_hor
-                if ($usuarioHorModel->save()) {
-                    // Si se guarda correctamente, mostrar un mensaje de éxito
-                    Yii::$app->session->setFlash('success', 'Horario asignado con éxito.');
-                } else {
-                    // Si hay errores al guardar
-                    Yii::$app->session->setFlash('error', 'Hubo un error al asignar el horario.');
-                }
-                // Redirigir a la vista deseada (por ejemplo, a la lista de horarios)
+        $model = new UsuarioHor();
+    
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
+            // Validación 1: Verificar duplicados exactos
+            $duplicado = UsuarioHor::find()
+                ->where([
+                    'id_usuario' => $model->id_usuario,
+                    'id_horario' => $model->id_horario
+                ])
+                ->exists();
+    
+            if ($duplicado) {
+                Yii::$app->session->setFlash('error', 'Este usuario ya tiene asignado este horario exacto.');
                 return $this->redirect(['horario/index']);
             }
+    
+            // Validación 2: Obtener datos del horario a asignar
+            $horarioNuevo = Horario::findOne($model->id_horario);
+            
+            if (!$horarioNuevo) {
+                Yii::$app->session->setFlash('error', 'El horario seleccionado no existe.');
+                return $this->redirect(['horario/index']);
+            }
+    
+            // Validación 3: Buscar horarios existentes del usuario
+            $horariosUsuario = UsuarioHor::find()
+                ->joinWith('horario')
+                ->where(['usuario_hor.id_usuario' => $model->id_usuario])
+                ->all();
+    
+            foreach ($horariosUsuario as $asignacion) {
+                // Verificar solapamiento de horarios
+                if ($this->horariosSeSolapan($asignacion->horario, $horarioNuevo)) {
+                    Yii::$app->session->setFlash('error', 
+                        'El usuario ya tiene un horario asignado que se solapa con este: ' .
+                        $asignacion->horario->nombre . ' (' . 
+                        $asignacion->horario->hora_inicio . ' a ' . 
+                        $asignacion->horario->hora_fin . ')');
+                    return $this->redirect(['horario/index']);
+                }
+            }
+    
+            // Si pasa todas las validaciones, guardar
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Horario asignado con éxito.');
+            } else {
+                Yii::$app->session->setFlash('error', 
+                    'Error al guardar: ' . implode(' ', $model->getFirstErrors()));
+            }
+    
+            return $this->redirect(['horario/index']);
         }
-
-        // Si no es un POST, redirigir
+    
         return $this->redirect(['horario/index']);
+    }
+    
+    /**
+     * Verifica si dos horarios se solapan
+     */
+    private function horariosSeSolapan($horario1, $horario2)
+    {
+        return ($horario1->hora_inicio < $horario2->hora_fin) && 
+               ($horario1->hora_fin > $horario2->hora_inicio);
     }
 }
 

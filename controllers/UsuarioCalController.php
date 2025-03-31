@@ -60,7 +60,7 @@ class UsuarioCalController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 25
+                'pageSize' => 15
             ],
            /* 'sort' => [
                 'defaultOrder' => [

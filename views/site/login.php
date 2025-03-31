@@ -68,15 +68,16 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php ActiveForm::end(); ?>
 
             <div class="text-center mt-4" style="font-size: 0.95rem;">
-                <p class="text-muted mb-3">¿No tienes una cuenta? <?= Html::a('Regístrate', '#', ['style' => 'color: #0C4B54; font-weight: 600; text-decoration: none;']) ?></p>
-                <div class="position-relative my-3">
-                    <hr style="border-color: rgba(0,0,0,0.1);">
-                    <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted" style="font-size: 0.85rem;">O</span>
-                </div>
-                <button class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center" style="border-radius: 10px; font-size: 0.95rem; height: 48px; transition: all 0.3s;">
-                    <i class="bi bi-google me-2"></i>Continuar con Google
-                </button>
-            </div>
+    <p class="text-muted mb-3">¿No tienes una cuenta? <?= Html::a('Regístrate', ['site/signup'], ['style' => 'color: #0C4B54; font-weight: 600; text-decoration: none;']) ?></p>
+    <div class="position-relative my-3">
+        <hr style="border-color: rgba(0,0,0,0.1);">
+        <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted" style="font-size: 0.85rem;">O</span>
+    </div>
+    <button class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center" style="border-radius: 10px; font-size: 0.95rem; height: 48px; transition: all 0.3s;">
+        <i class="bi bi-google me-2"></i>Continuar con Google
+    </button>
+</div>
+
         </div>
         
         <div class="card-footer bg-transparent border-0 text-center pb-3 pt-2">

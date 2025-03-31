@@ -370,6 +370,12 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'active' => $this->context->route == 'usuario-tic/index'
                 ] : '',
 
+                Permiso::seccion('ticket') ? [
+                    'label' => '<i class="bi bi-person"></i> <span>Calificaciones</span>', 
+                    'url' => ['/calificacion/index'],
+                    'active' => $this->context->route == 'calificacion/index'
+                ] : '',
+
                 Permiso::seccion('asistencia') ? [
                     'label' => '<i class="bi bi-calendar-check"></i> <span>' . (Yii::$app->user->identity->id_rol == 3 ? 'Mis asistencias' : 'Asistencias') . '</span>', 
                     'url' => ['/asistencia/index'],

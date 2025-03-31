@@ -9,6 +9,9 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\SignupForm;  
+use app\models\Persona;
+use app\models\User;
 
 class SiteController extends Controller
 {
@@ -115,4 +118,66 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+    public function actionCreate()
+    {
+        $modelPersona = new Persona();
+        $modelUser = new User();
+    
+        if ($this->request->isPost) {
+            // Asignación de datos de la persona
+            $informacion = $this->request->post();
+            $modelPersona->nombre = $informacion['User']['nombre'];
+            $modelPersona->apellido_paterno = $informacion['User']['apellidoPaterno'];
+            $modelPersona->apellido_materno = $informacion['User']['apellidoMaterno'];
+    
+            $transaction = Yii::$app->db->beginTransaction();
+            
+            try {
+                // Insertar persona y asignar su id en user.id_persona
+                if (!$modelPersona->save()) {
+                    throw new \Exception('Error al guardar la persona: ' . implode(' ', $modelPersona->firstErrors));
+                }
+    
+                // Asignar el ID de persona al usuario
+                $informacion['User']['id_persona'] = $modelPersona->id;
+                $modelUser->estatus = '1';  // Establecer el estatus como habilitado por defecto
+    
+                // Insertar usuario
+                if (!$modelUser->load($informacion) || !$modelUser->save()) {
+                    throw new \Exception('Error al guardar el usuario: ' . implode(' ', $modelUser->firstErrors));
+                }
+    
+                // Confirmar la transacción si todo ha ido bien
+                $transaction->commit();
+    
+                return $this->redirect(['view', 'id' => $modelUser->id]);
+    
+            } catch (\Exception $e) {
+                // En caso de error, deshacer los cambios realizados
+                $transaction->rollBack();
+    
+                // Eliminar la persona si el usuario no se guardó correctamente
+                if (!$modelUser->hasErrors()) {
+                    $modelPersona->delete();
+                }
+    
+                return $this->render('/site/error', [
+                    'name' => 'No se pudo agregar el usuario',
+                    'message' => 'Verifique que el correo no se repita o falte información. Detalle del error: ' . $e->getMessage()
+                ]);
+            }
+        } else {
+            // Si es una solicitud GET, cargar los valores por defecto
+            $modelUser->loadDefaultValues();
+        }
+    
+        // Renderizar la vista para crear el usuario
+        return $this->render('create', [
+            'model' => $modelUser, 
+            'accion' => 'create'
+        ]);
+    }
+    
+    
+    
 }

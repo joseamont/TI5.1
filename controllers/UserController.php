@@ -84,12 +84,12 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-        if (!Permiso::accion('user', 'create')) {
+        /*if (!Permiso::accion('user', 'create')) {
             return $this->render('/site/error', [
                 'name' => 'Permiso denegado',
                 'message' => 'No tiene permiso para realizar esta función, verifique con el administrador de sistemas.'
             ]);
-        }
+        }*/
 
         $modelPersona = new Persona();
         $modelUser = new User();

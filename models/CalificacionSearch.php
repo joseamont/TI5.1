@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Calificaciones;
+use app\models\Calificacion;
 
 /**
- * CalificacionesSearch represents the model behind the search form of `app\models\Calificaciones`.
+ * CalificacionSearch represents the model behind the search form of `app\models\Calificacion`.
  */
-class CalificacionesSearch extends Calificaciones
+class CalificacionSearch extends Calificacion
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,8 @@ class CalificacionesSearch extends Calificaciones
     public function rules()
     {
         return [
-            [['id', 'calificacion'], 'integer'],
+            [['id', 'id_ticket', 'id_usuario', 'rapidez', 'claridad', 'amabilidad', 'puntuacion'], 'integer'],
+            [['comentario', 'fecha'], 'safe'],
         ];
     }
 
@@ -39,7 +40,7 @@ class CalificacionesSearch extends Calificaciones
      */
     public function search($params)
     {
-        $query = Calificaciones::find();
+        $query = Calificacion::find();
 
         // add conditions that should always apply here
 
@@ -58,8 +59,16 @@ class CalificacionesSearch extends Calificaciones
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'calificacion' => $this->calificacion,
+            'id_ticket' => $this->id_ticket,
+            'id_usuario' => $this->id_usuario,
+            'rapidez' => $this->rapidez,
+            'claridad' => $this->claridad,
+            'amabilidad' => $this->amabilidad,
+            'puntuacion' => $this->puntuacion,
+            'fecha' => $this->fecha,
         ]);
+
+        $query->andFilterWhere(['like', 'comentario', $this->comentario]);
 
         return $dataProvider;
     }

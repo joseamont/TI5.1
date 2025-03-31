@@ -68,7 +68,7 @@ class TicketController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $query); // Pasamos el query filtrado
     
         // Configurar la paginación
-        $dataProvider->pagination = ['pageSize' => 25];
+        $dataProvider->pagination = ['pageSize' => 15];
     
         return $this->render('index', [
             'searchModel' => $searchModel,

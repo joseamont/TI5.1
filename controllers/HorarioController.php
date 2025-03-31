@@ -53,7 +53,7 @@ class HorarioController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Horario::find(),
             'pagination' => [
-                'pageSize' => 25
+                'pageSize' => 10
             ],
         ]);
     

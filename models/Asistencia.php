@@ -79,4 +79,11 @@ class Asistencia extends \yii\db\ActiveRecord
     return $this->STATUS ? Yii::$app->formatter->asTime($this->STATUS, 'php:H:i') : '-';
 }
 
+public function getHorario()
+{
+    return $this->hasOne(Horario::class, ['id' => 'id_horario']);
+}
+
+
+
 }

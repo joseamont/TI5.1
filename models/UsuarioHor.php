@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Horario;
 
 /**
  * This is the model class for table "usuario_hor".

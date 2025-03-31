@@ -54,7 +54,7 @@ class SuscripcionesController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Suscripciones::find(),
             'pagination' => [
-                'pageSize' => 25
+                'pageSize' => 10
             ],
            /* 'sort' => [
                 'defaultOrder' => [

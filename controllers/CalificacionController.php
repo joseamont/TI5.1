@@ -2,19 +2,16 @@
 
 namespace app\controllers;
 
-use Yii;
-use app\models\Calificaciones;
-use app\models\Ticket;
-use app\models\CalificacionesSearch;
+use app\models\Calificacion;
+use app\models\CalificacionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-
 /**
- * CalificacionesController implements the CRUD actions for Calificaciones model.
+ * CalificacionController implements the CRUD actions for Calificacion model.
  */
-class CalificacionesController extends Controller
+class CalificacionController extends Controller
 {
     /**
      * @inheritDoc
@@ -35,13 +32,13 @@ class CalificacionesController extends Controller
     }
 
     /**
-     * Lists all Calificaciones models.
+     * Lists all Calificacion models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new CalificacionesSearch();
+        $searchModel = new CalificacionSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -51,7 +48,7 @@ class CalificacionesController extends Controller
     }
 
     /**
-     * Displays a single Calificaciones model.
+     * Displays a single Calificacion model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,50 +61,29 @@ class CalificacionesController extends Controller
     }
 
     /**
-     * Creates a new Calificaciones model.
+     * Creates a new Calificacion model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($ticket_id)
-{
-    // Buscar el ticket
-    $ticket = Ticket::findOne($ticket_id);
-    if (!$ticket) {
-        throw new NotFoundHttpException('El ticket no existe.');
-    }
+    public function actionCreate()
+    {
+        $model = new Calificacion();
 
-    // Crear una nueva instancia del modelo de calificación
-    $model = new Calificaciones();
-    $model->id_ticket = $ticket_id; // Asociamos la calificación al ticket
-
-    // Validamos y guardamos la calificación
-    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-        // Guardamos la calificación
-        if ($model->save()) {
-            // Actualizar el ticket con la ID de la calificación
-            $ticket->id_calificacion = $model->id; // Asignamos la ID de la calificación
-            $ticket->save(); // Guardamos el ticket con la nueva relación
-
-            // Mensaje de éxito
-            Yii::$app->session->setFlash('success', 'Gracias por calificar el servicio.');
-
-            // Redirigir a la vista del ticket
-            return $this->redirect(['ticket/view', 'id' => $ticket_id]); // Redirigir a la vista del ticket
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         } else {
-            // En caso de error al guardar la calificación
-            Yii::$app->session->setFlash('error', 'Hubo un error al guardar la calificación.');
+            $model->loadDefaultValues();
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
-
-    return $this->render('create', [
-        'model' => $model,
-        'ticket' => $ticket,
-    ]);
-}
-
 
     /**
-     * Updates an existing Calificaciones model.
+     * Updates an existing Calificacion model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -127,7 +103,7 @@ class CalificacionesController extends Controller
     }
 
     /**
-     * Deletes an existing Calificaciones model.
+     * Deletes an existing Calificacion model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -141,15 +117,15 @@ class CalificacionesController extends Controller
     }
 
     /**
-     * Finds the Calificaciones model based on its primary key value.
+     * Finds the Calificacion model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Calificaciones the loaded model
+     * @return Calificacion the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Calificaciones::findOne(['id' => $id])) !== null) {
+        if (($model = Calificacion::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

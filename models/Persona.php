@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\PersonaInfo;
 
 /**
  * This is the model class for table "persona".
@@ -57,4 +58,11 @@ class Persona extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id_persona' => 'id']);
     }
+
+    public function getPersonaInfo()
+    {
+        return $this->hasOne(PersonaInfo::class, ['id_persona' => 'id']);
+    }
+    
+
 }

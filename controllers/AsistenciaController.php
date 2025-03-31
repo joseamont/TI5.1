@@ -192,4 +192,60 @@ class AsistenciaController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionConsultaAsistencias()
+{
+    // Paso 1: Obtener todos los registros de usuario_hor
+    $usuarioHorarios = UsuarioHor::find()->all(); 
+    
+    // Paso 2: Obtener todos los horarios y asistencias
+    $horarios = Horario::find()->indexBy('id')->all();  // Indexar horarios por ID
+    $asistencias = Asistencia::find()->indexBy('id_usuario')->all();  // Indexar asistencias por ID de usuario
+
+    // Paso 3: Preparar los resultados con la lógica de comparación
+    $resultados = [];
+    foreach ($usuarioHorarios as $usuarioHorario) {
+        $usuarioId = $usuarioHorario->id_usuario;
+
+        // Verificar si existen los registros correspondientes
+        if (isset($horarios[$usuarioHorario->id_horario]) && isset($asistencias[$usuarioId])) {
+            $horario = $horarios[$usuarioHorario->id_horario];
+            $asistencia = $asistencias[$usuarioId];
+
+            // Comparar hora_entrada con hora_inicio
+            $horaInicio = $horario->hora_inicio;
+            $horaEntrada = $asistencia->hora_entrada;
+
+            // Convertir a timestamps para comparar
+            $horaInicioTimestamp = strtotime($horaInicio);
+            $horaEntradaTimestamp = strtotime($horaEntrada);
+
+            // Determinar el estatus (Retardo o A tiempo)
+            $estatus = ($horaEntradaTimestamp > $horaInicioTimestamp) ? 'Retardo' : 'A tiempo';
+
+            // Agregar los resultados al array
+            $resultados[] = [
+                'id_usuario' => $usuarioId,
+                'hora_inicio' => $horaInicio,
+                'hora_entrada' => $horaEntrada,
+                'fecha' => $asistencia->fecha,
+                'status' => $asistencia->status,
+                'estatus' => $estatus,  // El campo calculado
+            ];
+        }
+    }
+
+    // Paso 4: Crear el ArrayDataProvider con los resultados procesados
+    return $this->render('consulta-asistencias', [
+        'dataProvider' => new \yii\data\ArrayDataProvider([
+            'allModels' => $resultados,  // Los resultados calculados
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]),
+    ]);
+}
+
+    
+
 }
