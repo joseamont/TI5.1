@@ -11,15 +11,31 @@ use yii\widgets\ActiveForm;
 <div class="usuario-tic-form">
 
     <?php $form = ActiveForm::begin(); ?>
+    <?php
+    // Obtener todos los usuarios con id_rol = 3
+    $usuarios = \app\models\User::find()
+        ->where(['id_rol' => 3])
+        ->all();
+    
+    // Crear array para el dropdown [id => username]
+    $listaUsuarios = [];
+    foreach ($usuarios as $usuario) {
+        $listaUsuarios[$usuario->id] = $usuario->username; // Mostrar el username
+    }
+    
+    // Mostrar el dropdown
+    echo $form->field($model, 'id_usuario')->dropDownList(
+        $listaUsuarios,
+        ['prompt' => 'Seleccione un usuario']
+    );
+    ?>
 
-    <?= $form->field($model, 'id_usuario')->textInput() ?>
+    <?= $form->field($model, 'id_ticket')->hiddenInput()->label(false) ?>
 
-    <?= $form->field($model, 'id_ticket')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_insercion')->textInput() ?>
+    <?= $form->field($model, 'fecha_insercion')->hiddenInput()->label(false) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\PersonaInfo;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var app\models\Persona $model */
@@ -16,19 +17,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-8">
             <div class="card shadow-sm border-0 profile-card">
-                <div class="card-header py-3" style="background-color: #0C4B54; border-bottom: none;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h2 class="h4 mb-0 text-white">
-                            <i class="bi bi-person-badge me-2"></i><?= Html::encode($this->title) ?>
-                        </h2>
-                        <div>
-                            <?= Html::a('<i class="bi bi-pencil-fill me-2"></i>Editar', ['update', 'id' => $model->id], [
-                                'class' => 'btn btn-light btn-sm rounded-pill px-3',
-                                'style' => 'color: #0C4B54;'
-                            ]) ?>
-                        </div>
-                    </div>
-                </div>
+            <div class="card-header py-3" style="background-color: #0C4B54; border-bottom: none;">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="h4 mb-0 text-white">
+            <i class="bi bi-person-badge me-2"></i><?= Html::encode($this->title) ?>
+        </h2>
+      
+    </div>
+</div>
                 
                 <div class="card-body p-4">
                     <div class="row align-items-center">
@@ -131,6 +127,46 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+
+<!-- Modal para Persona Info -->
+<div class="modal fade" id="personaInfoModal" tabindex="-1" aria-labelledby="personaInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0C4B54; color: white;">
+                <h5 class="modal-title" id="personaInfoModalLabel">
+                    <i class="bi bi-person-lines-fill me-2"></i>Información Personal
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="personaInfoModalContent">
+                <!-- El contenido se cargará dinámicamente aquí -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadPersonaInfo(idPersona) {
+    // Cargar el formulario en el modal
+    $('#personaInfoModalContent').load('<?= Url::to(['persona-info/form-modal']) ?>?id_persona=' + idPersona);
+}
+
+// Limpiar el modal cuando se cierre
+$('#personaInfoModal').on('hidden.bs.modal', function () {
+    $('#personaInfoModalContent').html(`
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    `);
+});
+</script>
 
 <!-- Incluir Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">

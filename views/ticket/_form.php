@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 
 use yii\helpers\ArrayHelper;
 use app\models\Asistencia;
+use app\models\UsuarioPla;
 
 /** @var yii\web\View $this */
 /** @var app\models\Ticket $model */
@@ -20,12 +21,28 @@ use app\models\Asistencia;
 
 <?= $form->field($model, 'id_usuario')->hiddenInput(['value' => Yii::$app->user->identity->id])->label(false) ?>
 
-    <div class="col-sm-3">
-            <?php
-            $i = ArrayHelper::map(Suscripciones::find()->all(), 'id', 'nombre');
-            echo $form->field($model, 'id_suscripcion')->dropDownList($i, ['prompt' => 'Seleccionar'])->label('Plan');
-            ?>
-        </div>
+<div class="col-sm-3">
+    <?php
+    // Obtener los planes contratados por el usuario actual
+    $planesContratados = UsuarioPla::find()
+        ->select('id_suscripcion')
+        ->where(['id_usuario' => Yii::$app->user->id])
+        ->andWhere(['not', ['id_suscripcion' => null]])
+        ->column();
+    
+    // Obtener las suscripciones correspondientes a los planes contratados
+    $suscripciones = Suscripciones::find()
+        ->where(['id' => $planesContratados])
+        ->all();
+    
+    // Mapear para el dropdown
+    $listaSuscripciones = ArrayHelper::map($suscripciones, 'id', 'nombre');
+    
+    echo $form->field($model, 'id_suscripcion')
+        ->dropDownList($listaSuscripciones, ['prompt' => 'Seleccionar'])
+        ->label('Plan');
+    ?>
+</div>
 
     <?= $form->field($model, 'tipo')->dropDownList([ 'Estado de Suscripción' => 'Estado de Suscripción', 'Problemas de Reproducción' => 'Problemas de Reproducción', 'Informe de Reembolsos y Soporte' => 'Informe de Reembolsos y Soporte', 'Otros' => 'Otros', ], ['prompt' => '']) ?>
 

@@ -58,22 +58,29 @@ class TicketController extends Controller
         $userId = Yii::$app->user->identity->id;
         $userRol = Yii::$app->user->identity->id_rol;
     
-        // Si el usuario tiene rol 4, solo verá sus propios tickets; de lo contrario, verá todos los tickets
-        $query = ($userRol == 4) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
+      // Si el usuario es de rol 4, solo ve sus propios tickets; de lo contrario, ve todos
+      $query = ($userRol == 4) ? Ticket::find()->where(['id_usuario' => $userId]) : Ticket::find();
     
-        // Crear el modelo de búsqueda
-        $searchModel = new TicketSearch();
-    
-        // Pasar el query filtrado por id_usuario al método search() del TicketSearch
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $query); // Pasamos el query filtrado
-    
-        // Configurar la paginación
-        $dataProvider->pagination = ['pageSize' => 15];
-    
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+
+      $searchModel = new TicketSearch();
+      $dataProvider = $searchModel->search($this->request->queryParams);
+      $dataProvider = new ActiveDataProvider([
+          'query' => $query,
+          'pagination' => [
+              'pageSize' => 15
+          ],
+         /* 'sort' => [
+              'defaultOrder' => [
+                  'id' => SORT_DESC,
+              ]
+          ],
+          */
+      ]);
+      return $this->render('index', [
+        'searchModel' => $searchModel,
+          'dataProvider' => $dataProvider,
+          
+      ]);
     }
     
     

@@ -24,15 +24,61 @@ $this->params['breadcrumbs'][] = $this->title;
 
 // Colores para los cards (paleta pastel)
 $cardColors = ['#E3F2FD', '#E8F5E9', '#FFF8E1', '#F3E5F5', '#FFEBEE', '#E0F7FA'];
+
+// Calcular el total de los precios de los planes
+$totalPlanes = 0;
+$planesContratados = 0;
+foreach ($dataProvider->getModels() as $model) {
+    if ($model->suscripcion) {
+        $totalPlanes += $model->suscripcion->precio;
+        $planesContratados++;
+    }
+}
 ?>
 
 <div class="usuario-pla-index">
+
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="fw-bold" style="color: #0C4B54;">
             <i class="bi bi-credit-card me-2"></i><?= Html::encode($this->title) ?>
         </h1>
+        <?php if (Yii::$app->user->id == 4): ?>
+            <div class="bg-primary text-white p-3 rounded shadow" style="background-color: #0C4B54!important;">
+                <h4 class="mb-0 fw-bold">
+                    <i class="bi bi-calculator me-2"></i>Total Administrador: 
+                    <?= Yii::$app->formatter->asCurrency($totalPlanes) ?>
+                </h4>
+            </div>
+        <?php endif; ?>
     </div>
+
+<!-- Sección de totales -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm" style="border-left: 4px solid #0C4B54; border-radius: 10px;">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1 fw-bold" style="color: #0C4B54;">
+                            <i class="bi bi-graph-up me-2"></i>Resumen Financiero
+                        </h5>
+                        <p class="mb-0 text-muted small">Total acumulado de todos los planes contratados</p>
+                    </div>
+                    <div class="text-end">
+                        <h3 class="mb-0 fw-bold" style="color: #0C4B54;">
+                            $<?= number_format($totalPlanes, 2, '.', ',') ?> MXN
+                        </h3>
+                        <p class="mb-0 text-muted small">
+                            <?= $planesContratados ?> <?= $planesContratados === 1 ? 'plan contratado' : 'planes contratados' ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <div class="row">
         <?php foreach ($dataProvider->getModels() as $index => $model): 
@@ -42,13 +88,13 @@ $cardColors = ['#E3F2FD', '#E8F5E9', '#FFF8E1', '#F3E5F5', '#FFEBEE', '#E0F7FA']
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card shadow-sm h-100 border-0" style="border-radius: 15px; border-top: 5px solid #0C4B54; background-color: <?= $cardColor ?>;">
                 <div class="card-header bg-transparent border-0 pb-0" style="border-top-left-radius: 15px!important; border-top-right-radius: 15px!important;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold text-dark">
-                            <i class="bi bi-person-circle me-2"></i><?= $model->user ? $model->user->getNombreUsuario() : 'Sin usuario' ?>
-                        </h5>
-                        <span class="badge rounded-pill" style="background-color: #0C4B54; color: white;">
+                    <div class="d-flex flex-column">
+                        <h3 class="mb-1 fw-bold text-center" style="color: #0C4B54;">
                             <?= $model->suscripcion ? $model->suscripcion->nombre : 'Sin plan' ?>
-                        </span>
+                        </h3>
+                        <h6 class="mb-0 text-muted text-center">
+                            <i class="bi bi-person-circle me-1"></i><?= $model->user ? $model->user->getNombreUsuario() : 'Sin usuario' ?>
+                        </h6>
                     </div>
                 </div>
                 <div class="card-body pt-2">
@@ -56,6 +102,14 @@ $cardColors = ['#E3F2FD', '#E8F5E9', '#FFF8E1', '#F3E5F5', '#FFEBEE', '#E0F7FA']
                         <span class="text-muted"><i class="bi bi-calendar-event me-1"></i>Contratación:</span>
                         <span class="fw-bold" style="color: #0C4B54;"><?= Yii::$app->formatter->asDatetime($model->fecha_insercion) ?></span>
                     </div>
+                    <?php if ($model->suscripcion): ?>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <span class="text-muted"><i class="bi bi-cash-coin me-1"></i>Precio:</span>
+        <span class="fw-bold" style="color: #0C4B54;">
+            $<?= number_format($model->suscripcion->precio, 2, '.', ',') ?> MXN
+        </span>
+    </div>
+<?php endif; ?>
                 </div>
                 <div class="card-footer bg-transparent border-0 pt-0">
                     <?php if (Permiso::accion('usuario_pla', 'view')): ?>
@@ -82,23 +136,6 @@ $cardColors = ['#E3F2FD', '#E8F5E9', '#FFF8E1', '#F3E5F5', '#FFEBEE', '#E0F7FA']
             'linkOptions' => ['class' => 'page-link'],
             'disabledListItemSubTagOptions' => ['tag' => 'a', 'class' => 'page-link'],
         ]); ?>
-    </div>
-</div>
-
-<!-- Modal para crear nuevo plan cliente -->
-<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalFormLabel">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Plan Cliente
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <?= $this->render('_form', ['model' => new UsuarioPla(), 'accion' => 'create']) ?>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -134,5 +171,11 @@ $cardColors = ['#E3F2FD', '#E8F5E9', '#FFF8E1', '#F3E5F5', '#FFEBEE', '#E0F7FA']
     
     .text-primary {
         color: #0C4B54!important;
+    }
+    
+    /* Estilo para el resumen financiero */
+    .resumen-card {
+        background: linear-gradient(135deg, rgba(12, 75, 84, 0.05) 0%, rgba(255,255,255,1) 100%);
+        border: none;
     }
 </style>

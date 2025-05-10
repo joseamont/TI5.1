@@ -370,7 +370,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'active' => $this->context->route == 'usuario-tic/index'
                 ] : '',
 
-                Permiso::seccion('ticket') ? [
+                Permiso::seccion('user') ? [
                     'label' => '<i class="bi bi-person"></i> <span>Calificaciones</span>', 
                     'url' => ['/calificacion/index'],
                     'active' => $this->context->route == 'calificacion/index'

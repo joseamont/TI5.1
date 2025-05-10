@@ -26,14 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="fw-bold" style="color: #0C4B54;"><?= Html::encode($this->title) ?></h1>
-        
-        <?php if (Permiso::accion('suscripciones', 'create')): ?>
-            <?= Html::a('<i class="bi bi-plus-lg me-2"></i>Nuevo Plan', ['#'], [
-                'class' => 'btn btn-primary',
-                'data-bs-toggle' => 'modal',
-                'data-bs-target' => '#modalForm',
-            ]) ?>
-        <?php endif; ?>
     </div>
 
     <div class="row g-4">

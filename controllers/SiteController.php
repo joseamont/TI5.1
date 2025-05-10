@@ -72,7 +72,80 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionLogin()
+    public function actionGoogleLogin()
+    {
+        $params = [
+            'client_id' => Yii::$app->params['google_client_id'],
+            'redirect_uri' => Yii::$app->params['google_redirect_uri'],
+            'response_type' => 'code',
+            'scope' => 'openid email profile',
+            'access_type' => 'online',
+            'prompt' => 'consent'
+        ];
+
+        $url = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+        return $this->redirect($url);
+    }
+
+    public function actionGoogleCallback($code = null)
+    {
+        if (!$code) {
+            return $this->redirect(['site/login']);
+        }
+
+        // 1. Intercambiar code por access token (usando cURL)
+        $ch = curl_init('https://oauth2.googleapis.com/token');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+            'code' => $code,
+            'client_id' => Yii::$app->params['google_client_id'],
+            'client_secret' => Yii::$app->params['google_client_secret'],
+            'redirect_uri' => Yii::$app->params['google_redirect_uri'],
+            'grant_type' => 'authorization_code',
+        ]));
+        $response = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+
+        $accessToken = $response['access_token'] ?? null;
+        if (!$accessToken) {
+            return $this->redirect(['site/login']);
+        }
+
+        // 2. Obtener datos del usuario
+        $ch = curl_init('https://www.googleapis.com/oauth2/v3/userinfo');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $accessToken]);
+        $userinfo = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+
+        if (!isset($userinfo['email'])) {
+            return $this->redirect(['site/login']);
+        }
+
+        // 3. Buscar o crear usuario
+        $user = \app\models\User::findOne(['username' => $userinfo['email']]);
+
+        if (!$user) {
+            // Guardar en persona
+            $persona = new \app\models\Persona();
+            $persona->nombre = $userinfo['given_name'] ?? 'SinNombre';
+            $persona->apellido_paterno = $userinfo['family_name'] ?? 'SinApellido';
+            $persona->save(false);
+
+            // Crear usuario vinculado a persona
+            $user = new \app\models\User();
+            $user->username = $userinfo['email'];
+            $user->id_persona = $persona->id;
+            $user->estatus = 1;
+            $user->id_rol = 4; // ⚠️ Asegúrate que este rol exista
+            $user-> password = 1234554321;
+            $user->save(false);
+        }
+
+        Yii::$app->user->login($user);
+        return $this->goHome();
+    }
+     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();

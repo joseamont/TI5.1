@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Ticket;
+use app\models\PersonaInfo;
 
 /**
- * TicketSearch represents the model behind the search form of `app\models\Ticket`.
+ * PersonaInfoSearch represents the model behind the search form of `app\models\PersonaInfo`.
  */
-class TicketSearch extends Ticket
+class PersonaInfoSearch extends PersonaInfo
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class TicketSearch extends Ticket
     public function rules()
     {
         return [
-            [['id', 'id_usuario', 'id_suscripcion', 'id_calificacion'], 'integer'],
-            [['tipo', 'fecha_apertura', 'fecha_cierre', 'status', 'descripcion'], 'safe'],
+            [['id', 'id_persona'], 'integer'],
+            [['fecha_nacimiento', 'genero', 'telefono', 'direccion', 'fecha_registro'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class TicketSearch extends Ticket
      */
     public function search($params)
     {
-        $query = Ticket::find();
+        $query = PersonaInfo::find();
 
         // add conditions that should always apply here
 
@@ -59,16 +59,14 @@ class TicketSearch extends Ticket
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'id_usuario' => $this->id_usuario,
-            'id_suscripcion' => $this->id_suscripcion,
-            'fecha_apertura' => $this->fecha_apertura,
-            'fecha_cierre' => $this->fecha_cierre,
-            'id_calificacion' => $this->id_calificacion,
+            'id_persona' => $this->id_persona,
+            'fecha_nacimiento' => $this->fecha_nacimiento,
+            'fecha_registro' => $this->fecha_registro,
         ]);
 
-        $query->andFilterWhere(['like', 'tipo', $this->tipo])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'descripcion', $this->descripcion]);
+        $query->andFilterWhere(['like', 'genero', $this->genero])
+            ->andFilterWhere(['like', 'telefono', $this->telefono])
+            ->andFilterWhere(['like', 'direccion', $this->direccion]);
 
         return $dataProvider;
     }

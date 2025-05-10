@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Calificacion;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\widgets\Pjax;
@@ -28,6 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
 // Get ticket status
 $ticket = Ticket::findOne($model->id_ticket);
 $isClosed = ($ticket && $ticket->status == 'cerrado');
+$currentUser = Yii::$app->user->identity;
+$alreadyRated = Calificacion::find()->where(['id_ticket' => $model->id_ticket, 'id_usuario' => $currentUser->id])->exists();
 ?>
 <div class="respuesta-view">
 
@@ -35,13 +38,20 @@ $isClosed = ($ticket && $ticket->status == 'cerrado');
         <h1><?= Html::encode($this->title) ?></h1>
         <div>
 
-
+        <?php if ($isClosed && $currentUser->id_rol == 4 && !$alreadyRated): ?>
+        <?= Html::button('<i class="bi bi-star me-2"></i> Calificar Servicio', [
+            'class' => 'btn btn-success btn-lg',
+            'data-bs-toggle' => 'modal',
+            'data-bs-target' => '#modalCalificacion',
+        ]) ?>
+    <?php endif; ?>
 
             <?php if ($isClosed): ?>
                 <span class="badge badge-status closed">Cerrado</span>
             <?php else: ?>
                 <span class="badge badge-status open">Abierto</span>
             <?php endif; ?>
+            
         </div>
     </div>
 
@@ -121,7 +131,52 @@ $isClosed = ($ticket && $ticket->status == 'cerrado');
         <?php endif; ?>
     </div>
 
+    <!-- Botón para calificar (solo si el usuario tiene id_rol 4 y el ticket está cerrado y no ha calificado aún) -->
+
+
+    <!-- Modal de calificación -->
+    <div class="modal fade" id="modalCalificacion" tabindex="-1" aria-labelledby="modalCalificacionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCalificacionLabel">Calificar Ticket #<?= $model->id_ticket ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?php $form = ActiveForm::begin([
+                        'action' => Url::to(['calificacion/create']),
+                        'method' => 'post',
+                    ]); ?>
+
+                    <?= Html::hiddenInput('Calificacion[id_ticket]', $model->id_ticket) ?>
+                    <?= Html::hiddenInput('Calificacion[id_usuario]', $currentUser->id) ?>
+
+                    <?= $form->field(new Calificacion(), 'rapidez')->dropDownList([1 => 'Muy lento', 2 => 'Lento', 3 => 'Regular', 4 => 'Rápido', 5 => 'Muy rápido'], ['prompt' => 'Selecciona una opción']) ?>
+                    <?= $form->field(new Calificacion(), 'claridad')->dropDownList([1 => 'Poco claro', 2 => 'Algo claro', 3 => 'Regular', 4 => 'Claro', 5 => 'Muy claro'], ['prompt' => 'Selecciona una opción']) ?>
+                    <?= $form->field(new Calificacion(), 'amabilidad')->dropDownList([1 => 'Poco amable', 2 => 'Algo amable', 3 => 'Regular', 4 => 'Amable', 5 => 'Muy amable'], ['prompt' => 'Selecciona una opción']) ?>
+                    <?= $form->field(new Calificacion(), 'puntuacion')->dropDownList([1 => '1 estrella', 2 => '2 estrellas', 3 => '3 estrellas', 4 => '4 estrellas', 5 => '5 estrellas'], ['prompt' => 'Selecciona una opción']) ?>
+                    <?= $form->field(new Calificacion(), 'comentario')->textarea(['rows' => 3, 'placeholder' => 'Agrega un comentario sobre el servicio...']) ?>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <?= Html::submitButton('Enviar Calificación', ['class' => 'btn btn-primary']) ?>
+                    </div>
+
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+<?php if (Yii::$app->session->hasFlash('success')): ?>
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <?= Yii::$app->session->getFlash('success') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+
 
 <!-- Resto del código CSS y JS permanece igual -->
 

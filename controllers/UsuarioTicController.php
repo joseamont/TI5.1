@@ -227,4 +227,32 @@ class UsuarioTicController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+
+    public function actionUpdateUsuario()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $id = $request->post('id'); 
+            $id_usuario = $request->post('id_usuario');
+    
+            $model = UsuarioTic::findOne($id);
+            if ($model) {
+                $model->id_usuario = $id_usuario;
+                if ($model->save()) {
+                    return ['success' => true, 'message' => 'Usuario actualizado correctamente.'];
+                } else {
+                    return ['success' => false, 'message' => 'Error al actualizar usuario.', 'errors' => $model->errors];
+                }
+            } else {
+                return ['success' => false, 'message' => 'Registro no encontrado.'];
+            }
+        }
+        return ['success' => false, 'message' => 'Petición no válida.'];
+    }
+    
+
+    
 }

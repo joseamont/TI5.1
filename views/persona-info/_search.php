@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\TicketSearch $model */
+/** @var app\models\PersonaInfoSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="ticket-search">
+<div class="persona-info-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,21 +17,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'id_usuario') ?>
+    <?= $form->field($model, 'id_persona') ?>
 
-   <?= $form->field($model, 'id_suscripcion') ?>
+    <?= $form->field($model, 'fecha_nacimiento') ?>
 
-    <?= $form->field($model, 'tipo') ?>
+    <?= $form->field($model, 'genero') ?>
 
-    <?= $form->field($model, 'fecha_apertura') ?>
+    <?= $form->field($model, 'telefono') ?>
 
-    <?php // echo $form->field($model, 'fecha_cierre') ?>
+    <?php // echo $form->field($model, 'direccion') ?>
 
-    <?php  echo $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'descripcion') ?>
-
-    <?php // echo $form->field($model, 'id_calificacion') ?>
+    <?php // echo $form->field($model, 'fecha_registro') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

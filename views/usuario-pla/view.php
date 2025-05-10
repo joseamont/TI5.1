@@ -37,8 +37,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     $('#ModalButtonMensaje').attr('data-url', '" . Yii::$app->urlManager->createUrl(['usuario-pla/delete', 'id' => $model->id]) . "');
                 ",
             ]) ?>
-        <?php else: ?>
-            <span class="text-muted"><i class="bi bi-lock me-1"></i>No tiene permiso para eliminar</span>
+        <?php endif; ?>
+        <?php if (Yii::$app->user->identity->id_rol == 4): ?>
+        <p>Para cancelar servicio levante un ticket</p>
         <?php endif; ?>
     </div>
 

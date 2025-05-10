@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 
 use app\models\UsuarioHor;
+use app\models\Horario;
 use yii\data\ActiveDataProvider;
 use app\models\UsuarioHorSearch;
 use yii\web\Controller;

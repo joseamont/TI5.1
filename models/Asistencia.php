@@ -25,7 +25,7 @@ class Asistencia extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'asistencia';
+       return 'asistencia_horario_estatus';
     }
 
     /**
@@ -83,7 +83,6 @@ public function getHorario()
 {
     return $this->hasOne(Horario::class, ['id' => 'id_horario']);
 }
-
 
 
 }

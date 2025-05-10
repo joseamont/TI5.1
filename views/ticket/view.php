@@ -95,7 +95,6 @@ if ($user && $user->id_rol == 4) {
                         }
                     ],
                     'descripcion:ntext',
-                    'id_calificacion',
                 ],
             ]) ?>
         </div>
@@ -167,6 +166,7 @@ if ($user && $user->id_rol == 4) {
         </div>
     </div>
 </div>
+
 
 <!-- Script para generar PDF (solo se carga si el botón es visible) -->
 <?php if ($mostrarBotonPDF): ?>

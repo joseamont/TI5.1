@@ -32,13 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <p class="text-muted mb-0">Administración de horarios laborales y especiales</p>
         </div>
         
-        <?php if (Permiso::accion('horario', 'create')): ?>
-            <?= Html::a('<i class="bi bi-plus-circle me-2"></i> Crear Horario', ['#'], [
-                'class' => 'btn btn-primary btn-lg shadow-sm',
-                'data-bs-toggle' => 'modal',
-                'data-bs-target' => '#modalForm',
-            ]) ?>
-        <?php endif; ?>
     </div>
 
     <div class="row g-4">
@@ -82,70 +75,78 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]) ?>
                         <?php endif; ?>
 
-                        <?php if (Permiso::accion('horario', 'delete')): ?>
-                            <?= Html::a('<i class="bi bi-trash me-1"></i>', ['delete', 'id' => $model->id], [
-                                'class' => 'btn btn-sm btn-outline-danger rounded-circle',
-                                'data' => [
-                                    'confirm' => '¿Está seguro que desea eliminar este horario?',
-                                    'method' => 'post',
-                                ],
-                            ]) ?>
-                        <?php endif; ?>
+                        <?php if (Permiso::accion('horario', 'update')): ?>
+                        <?= Html::a(
+                            '<i class="bi bi-eye-fill me-1"></i> Actualizar Horario', 
+                            ['update', 'id' => $model->id],
+                            ['class' => 'btn btn-sm btn-info']
+                        ) ?>
+                    <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal de Asignación para cada horario -->
-        <div class="modal fade modal-assign" id="assignModal<?= $model->id ?>" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content border-0 shadow">
-                    <div class="modal-header" style="background-color: #0C4B54; color: white;">
-                        <h5 class="modal-title">
-                            <i class="bi bi-people-fill me-2"></i>Asignar Horario: <?= Html::encode($model->dias) ?>
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <?php $form = \yii\widgets\ActiveForm::begin([
-                            'action' => ['usuario-hor/assign'],
-                            'method' => 'post',
-                            'id' => 'assign-form-'.$model->id
-                        ]); ?>
-
-                        <?= $form->field($usuarioHorModel, 'id_usuario')->dropDownList(
-                            \yii\helpers\ArrayHelper::map(
-                                User::find()
-                                    ->where(['!=', 'id', 4])
-                                    ->orderBy('username')
-                                    ->all(), 
-                                'id', 
-                                'username'
-                            ),
-                            [
-                                'prompt' => 'Seleccionar empleado',
-                                'class' => 'form-select'
-                            ]
-                        )->label('Empleado') ?>
-
-                        <?= $form->field($usuarioHorModel, 'id_horario')->hiddenInput(['value' => $model->id])->label(false) ?>
-
-                        <div class="alert alert-info mt-3">
-                            <i class="bi bi-info-circle"></i> Horario: <?= Yii::$app->formatter->asTime($model->hora_inicio) ?> - <?= Yii::$app->formatter->asTime($model->hora_fin) ?>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle me-1"></i> Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-3">
-                            <i class="bi bi-save me-1"></i> Guardar Asignación
-                        </button>
-                    </div>
-                    <?php \yii\widgets\ActiveForm::end(); ?>
-                </div>
+       <!-- Modal de Asignación para cada horario -->
+<div class="modal fade modal-assign" id="assignModal<?= $model->id ?>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header" style="background-color: #0C4B54; color: white;">
+                <h5 class="modal-title">
+                    <i class="bi bi-people-fill me-2"></i>Asignar Horario: <?= Html::encode($model->dias) ?>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+
+                <?php $form = \yii\widgets\ActiveForm::begin([
+                    'action' => ['usuario-hor/assign'],
+                    'method' => 'post',
+                    'id' => 'assign-form-'.$model->id
+                ]); ?>
+
+                <?= $form->field($usuarioHorModel, 'id_usuario')->dropDownList(
+                    \yii\helpers\ArrayHelper::map(
+                        User::find()
+                            ->where(['id_rol' => 3]) // Solo empleados rol 3
+                            ->andWhere(['NOT IN', 'id', 
+                                (new \yii\db\Query())
+                                    ->select('id_usuario')
+                                    ->from('usuario_hor') // Usuarios ya asignados
+                            ])
+                            ->orderBy('username') // Ordenado por nombre
+                            ->all(),
+                        'id',
+                        'username'
+                    ),
+                    [
+                        'prompt' => 'Seleccionar empleado',
+                        'class' => 'form-select'
+                    ]
+                )->label('Empleado') ?>
+
+                <?= $form->field($usuarioHorModel, 'id_horario')->hiddenInput(['value' => $model->id])->label(false) ?>
+
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle"></i> Horario: <?= Yii::$app->formatter->asTime($model->hora_inicio) ?> - <?= Yii::$app->formatter->asTime($model->hora_fin) ?>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary rounded-pill px-3">
+                    <i class="bi bi-save me-1"></i> Guardar Asignación
+                </button>
+            </div>
+
+                <?php \yii\widgets\ActiveForm::end(); ?>
+
         </div>
+    </div>
+</div>
+
         <?php endforeach; ?>
     </div>
 

@@ -1,8 +1,10 @@
 <?php
 
+use app\models\Suscripciones;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use app\models\Permiso;
 
 /** @var yii\web\View $this */
 /** @var app\models\Suscripciones $model */
@@ -19,6 +21,14 @@ $this->params['breadcrumbs'][] = $model->nombre;
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h4 mb-0"><?= Html::encode($this->title) ?></h1>
+                <?php if (Permiso::accion('suscripciones', 'update')): ?>
+                        <?= Html::a(
+                            '<i class="bi bi-eye-fill me-1"></i> Actualizar Horario', 
+                            ['update', 'id' => $model->id],
+                            ['class' => 'btn btn-sm btn-info']
+                        ) ?>
+                    <?php endif; ?>
+            <?php $form = $this->render('_form', ['model' => new Suscripciones(), 'accion' => 'create']); ?>
             </div>
         </div>
         
@@ -92,6 +102,23 @@ $this->params['breadcrumbs'][] = $model->nombre;
                 'summary' => 'Mostrando <b>{begin}-{end}</b> de <b>{totalCount}</b> usuarios',
                 'layout' => "{summary}\n{items}\n<div class='d-flex justify-content-center'>{pager}</div>",
             ]); ?>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear nuevo ticket -->
+<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background-color: #0C4B54;">
+                <h5 class="modal-title" id="modalFormLabel">
+                    <i class="bi bi-plus-circle me-2"></i> Nuevo Ticket
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <?= $form ?>
+            </div>
         </div>
     </div>
 </div>
